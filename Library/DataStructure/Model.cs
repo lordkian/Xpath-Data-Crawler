@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 
-namespace Library.DataStructure
+namespace com.MovieAssistant.core.DataStructure
 {
     public enum SaveType { XML, JSON, Binary };
     [DataContract]

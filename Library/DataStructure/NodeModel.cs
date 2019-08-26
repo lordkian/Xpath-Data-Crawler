@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Library.DataStructure
+namespace com.MovieAssistant.core.DataStructure
 {
     internal class NodeModel
     {

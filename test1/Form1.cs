@@ -1,5 +1,5 @@
 ﻿using com.MovieAssistant.core;
-using Library.DataStructure;
+using com.MovieAssistant.core.DataStructure;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

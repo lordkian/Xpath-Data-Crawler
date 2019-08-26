@@ -1,7 +1,7 @@
 ﻿using com.MovieAssistant.core.Exceptions;
 using System;
 
-namespace Library.DataStructure
+namespace com.MovieAssistant.core.DataStructure
 {
     internal class BrancheModle : NodeModel
     {
