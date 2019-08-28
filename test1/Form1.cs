@@ -15,6 +15,7 @@ namespace test1
 {
     public partial class Form1 : Form
     {
+        Data Data;
         public Form1()
         {
             InitializeComponent();
@@ -29,6 +30,7 @@ namespace test1
                 SearchEng = @"https://subscene.com/subtitles/searchbytitle"
             };
             modle.SetRoot(3);
+            modle.AddNameValueCollection(modle.RootGuid, "query", "@SearchWord");
 
             modle.AddItem(modle.RootGuid, "//div[@class='title']/a", "Name", LeafType.Data, false);
             modle.AddItem(modle.RootGuid, @"//div[@class='subtle count']", "Count", LeafType.Data, false);
@@ -41,12 +43,19 @@ namespace test1
             modle.AddItem("//td[@class='a1']/a/@href", @"//*[@id='downloadButton']/a/@href", "subtitle.zip", LeafType.Downloadable, true);
 
             modle.Save("kian.json", SaveType.JSON);
+
+            Data = new Data(modle, textBox1.Text);
+            Data.SetFilter("//div[@class='title']/a", "//td[@class='a1']/a/span[@class]");
+            Data.onFilter = (list) => { listBox1.Items.Clear();listBox1.Items.AddRange(list); };
+            Data.onFinish = () => { MessageBox.Show("Test"); };
+            Data.Start(false);
             //var model = Model.Load("kian.json");
         }
 
         private void ListBox1_DoubleClick(object sender, EventArgs e)
         {
-
+            Data.Filter(listBox1.SelectedItem as string);
+            Data.Continue();
         }
 
         private void ListBox2_DoubleClick(object sender, EventArgs e)

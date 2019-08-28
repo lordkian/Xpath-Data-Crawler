@@ -13,7 +13,7 @@ namespace com.MovieAssistant.core.DataStructure
     public class Model
     {
         [DataMember]
-        BrancheModle Root;
+        internal BrancheModle Root;
         [DataMember]
         public string SiteNmae { get; set; }
         [DataMember]
@@ -32,6 +32,28 @@ namespace com.MovieAssistant.core.DataStructure
             Root = new BrancheModle(ChildNumber) { Xpath = "", Guid = Guid.NewGuid() };
             NodeModelToXpath.Add(Root, Root.Xpath);
             NodeModelToGuid.Add(Root, Root.Guid);
+        }
+        public void AddNameValueCollection(Guid guid, params string[] data)
+        {
+            if (data.Length % 2 == 1)
+                throw new Exception("data must be even.");
+            NodeModel father;
+            if (!NodeModelToGuid.TryGetBySecond(guid, out father))
+                throw new GuidNotFoundException();
+            if (father is LeafModel)
+                throw new BadGuidException();
+            (father as BrancheModle).PostDataXpath = data;
+        }
+        public void AddNameValueCollection(string xpath, params string[] data)
+        {
+            if (data.Length % 2 == 1)
+                throw new Exception("data must be even.");
+            NodeModel father;
+            if (!NodeModelToXpath.TryGetBySecond(xpath, out father))
+                throw new XpathNotFoundException();
+            if (father is LeafModel)
+                throw new BadGuidException();
+            (father as BrancheModle).PostDataXpath = data;
         }
         public void AddItem(Guid fatherGuid, string xpath, string name, LeafType type, bool isUnique, bool isURLRelative = true)
         {
