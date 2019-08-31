@@ -18,6 +18,7 @@ namespace com.MovieAssistant.core.DataStructure
         public string SiteNmae { get; set; }
         [DataMember]
         public string BaseURL { get; set; }
+        [DataMember]
         public string SearchEng { get; set; }
         public Guid RootGuid { get { return Root.Guid; } }
         public string[] RooPostDataXpath

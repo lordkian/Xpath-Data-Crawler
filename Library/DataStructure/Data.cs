@@ -123,6 +123,43 @@ namespace com.MovieAssistant.core.DataStructure
             TmpIndex = -1;
             IsFilterd = true;
         }
+        public List<List<ModelDataPackage>> ToList()
+        {
+            var MainList = new List<List<SubDataPackage>>() { new List<SubDataPackage>() { Root } };
+            var newList = new List<List<SubDataPackage>>();
+            while (true)
+            {
+                newList.Clear();
+                foreach (var item in MainList)
+                {
+                    var sdp = item.Last();
+                    if (sdp.NextSubDataPackage != null && sdp.NextSubDataPackage.Count != 0)
+                        foreach (var item2 in sdp.NextSubDataPackage)
+                        {
+                            var tmp = new List<SubDataPackage>();
+                            tmp.AddRange(item);
+                            tmp.Add(item2);
+                            newList.Add(tmp);
+                        }
+                }
+                if (newList.Count == 0)
+                    break;
+                MainList.Clear();
+                MainList.AddRange(newList);
+            }
+            var res = new List<List<ModelDataPackage>>();
+            foreach (var item in MainList)
+            {
+                var allSD = new List<SubData>();
+                foreach (var item2 in item)
+                    allSD.AddRange((from i in item2.SubDatas where i.NodeModel is LeafModel select i));
+                var list = new List<ModelDataPackage>();
+                foreach (var item2 in allSD)
+                    list.Add(new ModelDataPackage(item2));
+                res.Add(list);
+            }
+            return res;
+        }
         private NameValueCollection GenerateNameValue(string[] data)
         {
             var nameValue = new NameValueCollection();
