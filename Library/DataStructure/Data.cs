@@ -123,7 +123,7 @@ namespace com.MovieAssistant.core.DataStructure
             TmpIndex = -1;
             IsFilterd = true;
         }
-        public List<List<ModelDataPackage>> ToList()
+        public List<NameValueCollection> ToList(ValueType outputType)
         {
             var MainList = new List<List<SubDataPackage>>() { new List<SubDataPackage>() { Root } };
             var newList = new List<List<SubDataPackage>>();
@@ -147,16 +147,32 @@ namespace com.MovieAssistant.core.DataStructure
                 MainList.Clear();
                 MainList.AddRange(newList);
             }
-            var res = new List<List<ModelDataPackage>>();
+            Func<SubData, string> func;
+            switch (outputType)
+            {
+                case ValueType.Guid:
+                    func = sd => { return sd.NodeModel.Guid.ToString(); };
+                    break;
+                case ValueType.Xpath:
+                    func = sd => { return sd.NodeModel.Xpath; };
+                    break;
+                case ValueType.Name:
+                    func = sd => { return (sd.NodeModel as LeafModel).Name; };
+                    break;
+                default:
+                    func = sd => { return sd.NodeModel.Xpath; };
+                    break;
+            }
+            var res = new List<NameValueCollection>();
             foreach (var item in MainList)
             {
                 var allSD = new List<SubData>();
                 foreach (var item2 in item)
                     allSD.AddRange((from i in item2.SubDatas where i.NodeModel is LeafModel select i));
-                var list = new List<ModelDataPackage>();
+                var nvc = new NameValueCollection();
                 foreach (var item2 in allSD)
-                    list.Add(new ModelDataPackage(item2));
-                res.Add(list);
+                    nvc.Add(func(item2), item2.Data);
+                res.Add(nvc);
             }
             return res;
         }
@@ -249,5 +265,9 @@ namespace com.MovieAssistant.core.DataStructure
     {
         public SubData[] SubDatas { get; set; }
         public List<SubDataPackage> NextSubDataPackage { get; set; } = new List<SubDataPackage>();
+    }
+    public enum ValueType
+    {
+        Guid, Xpath, Name
     }
 }
