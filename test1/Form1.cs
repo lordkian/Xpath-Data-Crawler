@@ -1,17 +1,10 @@
-﻿using com.MovieAssistant.core;
-using com.MovieAssistant.core.DataStructure;
+﻿using com.MovieAssistant.core.DataStructure;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using ValueType = com.MovieAssistant.core.DataStructure.ValueType;
 
 namespace test1
 {
@@ -50,31 +43,23 @@ namespace test1
             Data.SetFilter("//div[@class='title']/a", "//td[@class='a1']/a/span[@class]");
             Data.onFilter = (list) => { listBox1.Items.Clear(); listBox1.Items.AddRange(list); };
             string path = textBox2.Text;
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
             Data.onFinish = () =>
             {
-                var res = Data.ToList();
+                var res = Data.ToList(ValueType.Xpath);
                 var i = 0;
                 foreach (var item in res)
                 {
-                    var newPath = "";
-                    foreach (var item2 in item)
-                        if (item2.Xpath == "//td[@class='a1']/a/span[@class]")
-                        {
-                            newPath = path + "\\" + item2.Value;
-                            Directory.CreateDirectory(newPath);
-                            break;
-                        }
-                    foreach (var item2 in item)
-                        if (item2.Xpath == "//div [@class='download']/a/@href")
-                        {
-                            var client = new WebClient();
-                            client.Encoding = Encoding.UTF8;
-                            var str = newPath + @"\" + i + ".zip";
-                            client.DownloadFile(model.BaseURL + "/" + item2.Value, str);
-                            break;
-                        }
+                    var newPath = $"{path}\\{item.Get("//td[@class='a1']/a/span[@class]")}\\";
+                    if (!Directory.Exists($"{path}\\{item.Get("//td[@class='a1']/a/span[@class]")}"))
+                        Directory.CreateDirectory($"{path}\\{item.Get("//td[@class='a1']/a/span[@class]")}");
+                    var client = new WebClient();
+                    client.Encoding = Encoding.UTF8;
+                    client.OpenRead(model.BaseURL + item.Get("//div [@class='download']/a/@href"));
+                    if (!string.IsNullOrEmpty(client.ResponseHeaders["Content-Disposition"]))
+                        newPath += client.ResponseHeaders["Content-Disposition"].Substring(client.ResponseHeaders["Content-Disposition"].IndexOf("filename=") + 9).Replace("\"", "");
+                    else
+                        newPath += i++ + ".zip";
+                    client.DownloadFile(model.BaseURL + item.Get("//div [@class='download']/a/@href"),newPath);
                 }
             };
             Data.Start(false);
