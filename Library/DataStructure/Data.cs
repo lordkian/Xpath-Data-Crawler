@@ -22,6 +22,8 @@ namespace com.MovieAssistant.core.DataStructure
         internal NodePackage Root { get; set; }
         public Action<string[]> onFilter { get; set; }
         public Action onFinish { get; set; }
+        private Data()
+        { }
         public Data(Model model, string searchKey)
         {
             Model = model;
@@ -122,6 +124,52 @@ namespace com.MovieAssistant.core.DataStructure
             TmpFilterKey = null;
             TmpIndex = -1;
             IsFilterd = true;
+        }
+        public Data GetSubData(string xpath, string value)
+        {
+            var data = new Data() { SearchKey = SearchKey, Model = Model };
+            var c = new List<NodePackage>() { Root };
+
+            while (c.Count > 0)
+            {
+                var next = new List<NodePackage>();
+                foreach (var item in c)
+                {
+                    next.AddRange(item.NextSubDataPackage);
+
+                    foreach (var item2 in item.SubDatas)
+                        if (item2.NodeModel.Xpath == xpath && item2.Data == value)
+                        {
+                            data.Root = item;
+                            return data;
+                        }
+                }
+                c = next;
+            }
+            return null;
+        }
+        public Data GetSubData(Guid id, string value)
+        {
+            var data = new Data() { SearchKey = SearchKey, Model = Model };
+            var c = new List<NodePackage>() { Root };
+
+            while (c.Count > 0)
+            {
+                var next = new List<NodePackage>();
+                foreach (var item in c)
+                {
+                    next.AddRange(item.NextSubDataPackage);
+
+                    foreach (var item2 in item.SubDatas)
+                        if (item2.NodeModel.Guid == id && item2.Data == value)
+                        {
+                            data.Root = item;
+                            return data;
+                        }
+                }
+                c = next;
+            }
+            return null;
         }
         public List<NameValueCollection> ToList(ValueType outputType)
         {
