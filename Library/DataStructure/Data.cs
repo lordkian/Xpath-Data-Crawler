@@ -256,16 +256,6 @@ namespace com.MovieAssistant.core.DataStructure
             return grouped;
         }
     }
-    internal class SubData
-    {
-        public NodeModel NodeModel { get; set; }
-        public string Data { get; set; }
-    }
-    internal class SubDataPackage
-    {
-        public SubData[] SubDatas { get; set; }
-        public List<SubDataPackage> NextSubDataPackage { get; set; } = new List<SubDataPackage>();
-    }
     public enum ValueType
     {
         Guid, Xpath, Name
