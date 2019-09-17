@@ -12,20 +12,20 @@ namespace com.MovieAssistant.core.DataStructure
 {
     public class Data
     {
-        List<SubDataPackage> Current = new List<SubDataPackage>();
+        List<NodePackage> Current = new List<NodePackage>();
         private List<LeafModel> Filters = new List<LeafModel>();
         private string SearchKey;
         private LeafModel TmpFilterKey = null;
         private int TmpIndex = -1;
         bool IsFilterd = false;
         public Model Model { get; set; }
-        internal SubDataPackage Root { get; set; }
+        internal NodePackage Root { get; set; }
         public Action<string[]> onFilter { get; set; }
         public Action onFinish { get; set; }
         public Data(Model model, string searchKey)
         {
             Model = model;
-            Root = new SubDataPackage() { SubDatas = new SubData[] { new SubData() { NodeModel = model.Root } } };
+            Root = new NodePackage() { SubDatas = new Node[] { new Node() { NodeModel = model.Root } } };
             Root.SubDatas[0].Data = string.Format(model.SearchEng, searchKey);
             SearchKey = searchKey;
         }
@@ -53,7 +53,7 @@ namespace com.MovieAssistant.core.DataStructure
                             onFilter((from i in Current select i.SubDatas[TmpIndex].Data).Distinct().ToArray());
                             return;
                         }
-                var next = new List<SubDataPackage>();
+                var next = new List<NodePackage>();
                 foreach (var item in Current)
                 {
                     foreach (var item2 in (from i in item.SubDatas where i.NodeModel is BrancheModle select i))
@@ -73,9 +73,9 @@ namespace com.MovieAssistant.core.DataStructure
 
                         foreach (var item3 in res)
                         {
-                            var subDataPackage = new SubDataPackage() { SubDatas = new SubData[bm.Next.Length] };
+                            var subDataPackage = new NodePackage() { SubDatas = new Node[bm.Next.Length] };
                             for (int i = 0; i < bm.Next.Length; i++)
-                                subDataPackage.SubDatas[i] = new SubData() { Data = item3[i], NodeModel = bm.Next[i] };
+                                subDataPackage.SubDatas[i] = new Node() { Data = item3[i], NodeModel = bm.Next[i] };
                             for (int i = 0; i < bm.Next.Length; i++)
                                 if (subDataPackage.SubDatas[i].NodeModel is BrancheModle && subDataPackage.SubDatas[i].NodeModel.IsURLRelative)
                                     subDataPackage.SubDatas[i].Data = Model.BaseURL + subDataPackage.SubDatas[i].Data;
@@ -125,8 +125,8 @@ namespace com.MovieAssistant.core.DataStructure
         }
         public List<NameValueCollection> ToList(ValueType outputType)
         {
-            var MainList = new List<List<SubDataPackage>>() { new List<SubDataPackage>() { Root } };
-            var newList = new List<List<SubDataPackage>>();
+            var MainList = new List<List<NodePackage>>() { new List<NodePackage>() { Root } };
+            var newList = new List<List<NodePackage>>();
             while (true)
             {
                 newList.Clear();
@@ -136,7 +136,7 @@ namespace com.MovieAssistant.core.DataStructure
                     if (sdp.NextSubDataPackage != null && sdp.NextSubDataPackage.Count != 0)
                         foreach (var item2 in sdp.NextSubDataPackage)
                         {
-                            var tmp = new List<SubDataPackage>();
+                            var tmp = new List<NodePackage>();
                             tmp.AddRange(item);
                             tmp.Add(item2);
                             newList.Add(tmp);
@@ -147,7 +147,7 @@ namespace com.MovieAssistant.core.DataStructure
                 MainList.Clear();
                 MainList.AddRange(newList);
             }
-            Func<SubData, string> func;
+            Func<Node, string> func;
             switch (outputType)
             {
                 case ValueType.Guid:
@@ -166,7 +166,7 @@ namespace com.MovieAssistant.core.DataStructure
             var res = new List<NameValueCollection>();
             foreach (var item in MainList)
             {
-                var allSD = new List<SubData>();
+                var allSD = new List<Node>();
                 foreach (var item2 in item)
                     allSD.AddRange((from i in item2.SubDatas where i.NodeModel is LeafModel select i));
                 var nvc = new NameValueCollection();
