@@ -21,7 +21,7 @@ namespace com.MovieAssistant.core.DataStructure
         public Model Model { get; set; }
         internal NodePackage Root { get; set; }
         public Action<string[]> onFilter { get; set; }
-        public Action onFinish { get; set; }
+        public Action<Data> onFinish { get; set; }
         private Data()
         { }
         public Data(Model model, string searchKey)
@@ -91,7 +91,47 @@ namespace com.MovieAssistant.core.DataStructure
                 Current.AddRange(next);
                 IsFilterd = false;
             }
-            onFinish();
+            onFinish(this);
+        }
+        public List<string> Get(string xpath)
+        {
+            var res = new List<string>();
+            var c = new List<NodePackage>() { Root };
+
+            while (c.Count > 0)
+            {
+                var next = new List<NodePackage>();
+                foreach (var item in c)
+                {
+                    next.AddRange(item.NextSubDataPackage);
+
+                    foreach (var item2 in item.SubDatas)
+                        if (item2.NodeModel.Xpath == xpath)
+                            res.Add(item2.Data);
+                }
+                c = next;
+            }
+            return res;
+        }
+        public List<string> Get(Guid id)
+        {
+            var res = new List<string>();
+            var c = new List<NodePackage>() { Root };
+
+            while (c.Count > 0)
+            {
+                var next = new List<NodePackage>();
+                foreach (var item in c)
+                {
+                    next.AddRange(item.NextSubDataPackage);
+
+                    foreach (var item2 in item.SubDatas)
+                        if (item2.NodeModel.Guid == id)
+                            res.Add(item2.Data);
+                }
+                c = next;
+            }
+            return res;
         }
         public void SetFilter(params string[] xpathes)
         {
@@ -171,6 +211,47 @@ namespace com.MovieAssistant.core.DataStructure
             }
             return null;
         }
+        public List<Data> GetSubData(string xpath)
+        {
+            var res = new List<Data>();
+            var c = new List<NodePackage>() { Root };
+
+            while (c.Count > 0)
+            {
+                var next = new List<NodePackage>();
+                foreach (var item in c)
+                {
+                    next.AddRange(item.NextSubDataPackage);
+
+                    foreach (var item2 in item.SubDatas)
+                        if (item2.NodeModel.Xpath == xpath)
+                            res.Add(new Data() { SearchKey = SearchKey, Model = Model, Root = item });
+                }
+                c = next;
+            }
+            return res;
+        }
+        public List<Data> GetSubData(Guid id)
+        {
+            var res = new List<Data>();
+            var c = new List<NodePackage>() { Root };
+
+            while (c.Count > 0)
+            {
+                var next = new List<NodePackage>();
+                foreach (var item in c)
+                {
+                    next.AddRange(item.NextSubDataPackage);
+
+                    foreach (var item2 in item.SubDatas)
+                        if (item2.NodeModel.Guid == id)
+                            res.Add(new Data() { SearchKey = SearchKey, Model = Model, Root = item });
+                }
+                c = next;
+            }
+            return res;
+        }
+
         public List<NameValueCollection> ToList(ValueType outputType)
         {
             var MainList = new List<List<NodePackage>>() { new List<NodePackage>() { Root } };

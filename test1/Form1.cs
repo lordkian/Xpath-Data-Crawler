@@ -10,7 +10,7 @@ namespace test1
 {
     public partial class Form1 : Form
     {
-        Data Data;
+        Data data;
         public Form1()
         {
             InitializeComponent();
@@ -39,13 +39,13 @@ namespace test1
             model.Save("kian.json", SaveType.JSON);
             //var model = Model.Load("kian.json");
 
-            Data = new Data(model, textBox1.Text);
-            Data.SetFilter("//div[@class='title']/a", "//td[@class='a1']/a/span[@class]");
-            Data.onFilter = (list) => { listBox1.Items.Clear(); listBox1.Items.AddRange(list); };
+            data = new Data(model, textBox1.Text);
+            data.SetFilter("//div[@class='title']/a", "//td[@class='a1']/a/span[@class]");
+            data.onFilter = (list) => { listBox1.Items.Clear(); listBox1.Items.AddRange(list); };
             string path = textBox2.Text;
-            Data.onFinish = () =>
+            /*data.onFinish = (d) =>
             {
-                var res = Data.ToList(ValueType.Xpath);
+                var res = d.ToList(ValueType.Xpath);
                 var i = 0;
                 foreach (var item in res)
                 {
@@ -61,13 +61,44 @@ namespace test1
                         newPath += i++ + ".zip";
                     client.DownloadFile(model.BaseURL + item.Get("//div [@class='download']/a/@href"),newPath);
                 }
+            };*/
+
+            data.onFinish = (d) =>
+            {
+
+                var datas = d.GetSubData(@"//td[@class='a1']/a/span[@class]");
+                foreach (var item in datas)
+                {
+                    var path2 = $"{path}\\{item.Get("//td[@class='a1']/a/span[@class]")[0]}\\";
+                    if (!Directory.Exists(path2))
+                        Directory.CreateDirectory(path2);
+                    var links = item.Get("//div [@class='download']/a/@href");
+                    int i = 0;
+                    foreach (var item2 in links)
+                    {
+                        var client = new WebClient();
+                        client.Encoding = Encoding.UTF8;
+                        var url = model.BaseURL + item2;
+                        client.OpenRead(url);
+                        if (!string.IsNullOrEmpty(client.ResponseHeaders["Content-Disposition"]))
+                        {
+                            path2 += client.ResponseHeaders["Content-Disposition"].Substring(client.ResponseHeaders["Content-Disposition"].IndexOf("filename=") + 9).Replace("\"", "");
+                            if (File.Exists(path2))
+                                path2.Replace(".zip", ++i + ".zip");
+                        }
+                        else
+                            path2 += i++ + ".zip";
+                        client.DownloadFile(url, path2);
+                    }
+                }
             };
-            Data.Start(false);
+
+            data.Start(false);
         }
         private void ListBox1_DoubleClick(object sender, EventArgs e)
         {
-            Data.Filter(listBox1.SelectedItem as string);
-            Data.Continue();
+            data.Filter(listBox1.SelectedItem as string);
+            data.Continue();
         }
         private void Button2_Click(object sender, EventArgs e)
         {
