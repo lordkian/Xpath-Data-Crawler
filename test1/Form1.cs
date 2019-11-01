@@ -88,7 +88,11 @@ namespace test1
                         }
                         else
                             path2 += i++ + ".zip";
-                        client.DownloadFile(url, path2);
+                        try
+                        {
+                            client.DownloadFile(url, path2);
+                        }
+                        catch (Exception) { }
                     }
                 }
             };

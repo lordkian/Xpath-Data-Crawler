@@ -50,7 +50,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(177, 20);
             this.textBox1.TabIndex = 5;
-            this.textBox1.Text = "friends";
+            this.textBox1.Text = "frozen";
             // 
             // button1
             // 

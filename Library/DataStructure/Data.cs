@@ -156,60 +156,36 @@ namespace com.MovieAssistant.core.DataStructure
             if (TmpFilterKey == null || TmpIndex == -1)
                 return; //exeption
             var cp = Current.ToArray().ToList();
+            var removeList = new List<NodePackage>();
             foreach (var item in cp)
             {
                 if (!data.Contains(item.SubDatas[TmpIndex].Data))
+                {
                     Current.Remove(item);
+                    removeList.Add(item);
+                }
             }
+            CleanEmptyData(removeList);
             TmpFilterKey = null;
             TmpIndex = -1;
             IsFilterd = true;
         }
-        public Data GetSubData(string xpath, string value)
+        private void CleanEmptyData(List<NodePackage> removeList)
         {
-            var data = new Data() { SearchKey = SearchKey, Model = Model };
-            var c = new List<NodePackage>() { Root };
-
-            while (c.Count > 0)
+            var list = new List<NodePackage>() { Root };
+            while (list.Count > 0)
             {
-                var next = new List<NodePackage>();
-                foreach (var item in c)
+                foreach (var item in list)
                 {
-                    next.AddRange(item.NextSubDataPackage);
-
-                    foreach (var item2 in item.SubDatas)
-                        if (item2.NodeModel.Xpath == xpath && item2.Data == value)
-                        {
-                            data.Root = item;
-                            return data;
-                        }
+                    foreach (var item2 in removeList)
+                        if (item.NextSubDataPackage.Contains(item2))
+                            item.NextSubDataPackage.Remove(item2);
                 }
-                c = next;
+                var oldList = list.Distinct().ToList();
+                list.Clear();
+                foreach (var item in oldList)
+                    list.AddRange(item.NextSubDataPackage);
             }
-            return null;
-        }
-        public Data GetSubData(Guid id, string value)
-        {
-            var data = new Data() { SearchKey = SearchKey, Model = Model };
-            var c = new List<NodePackage>() { Root };
-
-            while (c.Count > 0)
-            {
-                var next = new List<NodePackage>();
-                foreach (var item in c)
-                {
-                    next.AddRange(item.NextSubDataPackage);
-
-                    foreach (var item2 in item.SubDatas)
-                        if (item2.NodeModel.Guid == id && item2.Data == value)
-                        {
-                            data.Root = item;
-                            return data;
-                        }
-                }
-                c = next;
-            }
-            return null;
         }
         public List<Data> GetSubData(string xpath)
         {
