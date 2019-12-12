@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Library.DataStructure;
 
 namespace ConsoleTest
@@ -14,7 +15,8 @@ namespace ConsoleTest
             tree.Add(2, 0);
             tree.Add(3, 2);
             tree.Add(4, 2);
-
+            var l1 = tree.GetLastLine();
+            var l2 = tree.GetAll();
         }
     }
 }

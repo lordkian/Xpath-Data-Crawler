@@ -33,5 +33,47 @@ namespace Library.DataStructure
                 throw new ItemNotFoundException();
             }
         }
+        public List<T> GetLastLine()
+        {
+            if (Root == null)
+                return null;
+
+            var list = new List<TreeNode<T>>() { Root };
+            while (list.Count > 0)
+            {
+                var next = new List<TreeNode<T>>();
+                foreach (var item in list)
+                    next.AddRange(item.Next);
+                if (next.Count == 0)
+                {
+                    var ret = new List<T>();
+                    foreach (var item in list)
+                        ret.Add(item.Data);
+                    return ret;
+                }
+                list.Clear();
+                list.AddRange(next);
+            }
+            return null;
+        }
+        public List<T> GetAll()
+        {
+            if (Root == null)
+                return null;
+            var ret = new List<T>();
+            var list = new List<TreeNode<T>>() { Root };
+            while (list.Count > 0)
+            {
+                var next = new List<TreeNode<T>>();
+                foreach (var item in list)
+                    next.AddRange(item.Next);
+                foreach (var item in list)
+                    ret.Add(item.Data);
+
+                list.Clear();
+                list.AddRange(next);
+            }
+            return ret;
+        }
     }
 }
