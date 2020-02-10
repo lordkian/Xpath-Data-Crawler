@@ -17,7 +17,7 @@ namespace test1
         }
         private void Button1_Click(object sender, EventArgs e)
         {
-            Model model = new Model()
+            old_Model model = new old_Model()
             {
                 BaseURL = "https://subscene.com",
                 SiteNmae = "subscene",
