@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Library.DataStructure
 {
+    [DataContract]
     internal class TreeNode<T>
     {
+        [DataMember]
         internal T Data;
-        internal TreeNode<T> Father;
+        [DataMember]
         internal List<TreeNode<T>> Next = new List<TreeNode<T>>();
         public TreeNode(T data)
         {

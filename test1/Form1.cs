@@ -1,4 +1,5 @@
 ﻿using com.MovieAssistant.core.DataStructure;
+using Library.DataStructure.Model;
 using System;
 using System.IO;
 using System.Net;

@@ -1,12 +1,15 @@
 ﻿using Library.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Library.DataStructure
 {
+    [DataContract]
     public class Tree<T>
     {
+        [DataMember]
         private TreeNode<T> Root;
         public void Add(T data, T Father)
         {
@@ -20,7 +23,7 @@ namespace Library.DataStructure
                     foreach (var item in list)
                         if (item.Data.Equals(Father))
                         {
-                            item.Next.Add(new TreeNode<T>(data) { Father = item });
+                            item.Next.Add(new TreeNode<T>(data));
                             return;
                         }
 

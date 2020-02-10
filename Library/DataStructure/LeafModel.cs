@@ -1,4 +1,6 @@
-﻿namespace com.MovieAssistant.core.DataStructure
+﻿using Library.DataStructure.Model;
+
+namespace com.MovieAssistant.core.DataStructure
 {
     internal class LeafModel : NodeModel
     {

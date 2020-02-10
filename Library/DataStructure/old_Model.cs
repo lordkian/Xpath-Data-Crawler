@@ -1,5 +1,6 @@
 ﻿using com.MovieAssistant.core;
 using com.MovieAssistant.core.Exceptions;
+using Library.DataStructure.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using System.Runtime.Serialization;
 
 namespace com.MovieAssistant.core.DataStructure
 {
-    public enum SaveType { XML, JSON, Binary };
     [DataContract]
     public class old_Model
     {
@@ -128,5 +128,4 @@ namespace com.MovieAssistant.core.DataStructure
             return res;
         }
     }
-    public enum LeafType { Downloadable, Data, FinalData }
 }
