@@ -16,7 +16,8 @@ namespace Library.DataStructure.Model
         public string SiteNmae { get; set; }
         [DataMember]
         public string BaseURL { get; set; }
-        [DataMember]
-        public string SearchEng { get; set; }
+
+        internal readonly Dictionary<string, ModelNode> XpathToModelNode = new Dictionary<string, ModelNode>();
+        internal readonly Dictionary<Guid, ModelNode> GuidToModelNode = new Dictionary<Guid, ModelNode>();
     }
 }
