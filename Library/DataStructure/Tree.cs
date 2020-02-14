@@ -78,5 +78,9 @@ namespace Library.DataStructure
             }
             return ret;
         }
+        public void Clear()
+        {
+            Root = null;
+        }
     }
 }
