@@ -3,9 +3,9 @@
 namespace Library.DataStructure.Model
 {
     [DataContract]
-    internal class Branche
+    internal class Branche : ModelNode
     {
         [DataMember]
-        internal string Method;
+        internal string GrabMethode;
     }
 }

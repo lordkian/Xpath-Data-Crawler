@@ -3,7 +3,7 @@
 namespace Library.DataStructure.Model
 {
     [DataContract]
-    public class Leaf
+    internal class Leaf : ModelNode
     {
         [DataMember]
         public bool IsUniqe { get; set; }

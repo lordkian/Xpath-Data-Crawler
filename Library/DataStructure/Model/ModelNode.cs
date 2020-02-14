@@ -9,7 +9,7 @@ namespace Library.DataStructure.Model
         [DataMember]
         public bool IsURLRelative { get; set; }
         [DataMember]
-        public Guid Guid { get; set; }
+        public Guid Id { get; set; }
         [DataMember]
         public string Xpath { get; set; }
     }
