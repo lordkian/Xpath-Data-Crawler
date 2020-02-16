@@ -11,6 +11,7 @@ namespace Library.DataStructure
     {
         [DataMember]
         private TreeNode<T> Root;
+        public T TreeRoot { get { return Root.Data; } }
         public void Add(T data, T Father)
         {
             if (Root == null)
