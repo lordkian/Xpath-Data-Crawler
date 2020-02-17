@@ -7,7 +7,8 @@ namespace Library.DataStructure.DataGrab
 {
     internal class DataNode
     {
-        internal List<ModelNode> ModelNodes = new List<ModelNode>();
-        internal List<string> Datas = new List<string>();
+        internal ModelNode Father;
+        internal readonly List<ModelNode> ModelNodes = new List<ModelNode>();
+        internal readonly List<string> Datas = new List<string>();
     }
 }
