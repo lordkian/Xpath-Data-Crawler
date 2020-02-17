@@ -12,7 +12,7 @@ namespace Library.DataStructure
         [DataMember]
         private TreeNode<T> Root;
         public T TreeRoot { get { return Root.Data; } }
-        public void Add(T data, T Father)
+        public void Add(T data, T father)
         {
             if (Root == null)
                 Root = new TreeNode<T>(data);
@@ -22,7 +22,7 @@ namespace Library.DataStructure
                 while (list.Count > 0)
                 {
                     foreach (var item in list)
-                        if (item.Data.Equals(Father))
+                        if (item.Data.Equals(father))
                         {
                             item.Next.Add(new TreeNode<T>(data));
                             return;
@@ -100,6 +100,32 @@ namespace Library.DataStructure
                 list.AddRange(next);
             }
             return ret;
+        }
+        public List<T> GetChildren(T father)
+        {
+            if (Root == null)
+                throw new ItemNotFoundException();
+
+            var list = new List<TreeNode<T>>() { Root };
+            while (list.Count > 0)
+            {
+                foreach (var item in list)
+                    if (item.Data.Equals(father))
+                    {
+                        var res = new List<T>();
+                        foreach (var item2 in item.Next)
+                            res.Add(item2.Data);
+                        return res;
+                    }
+
+                var next = new List<TreeNode<T>>();
+                foreach (var item in list)
+                    next.AddRange(item.Next);
+                list.Clear();
+                list.AddRange(next);
+            }
+
+            throw new ItemNotFoundException();
         }
         public void Clear()
         {
