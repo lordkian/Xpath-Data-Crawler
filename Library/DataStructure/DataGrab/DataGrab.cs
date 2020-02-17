@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 
 namespace Library.DataStructure.DataGrab
@@ -12,6 +13,10 @@ namespace Library.DataStructure.DataGrab
     {
         readonly Model.Model model;
         readonly Tree<DataNode> tree = new Tree<DataNode>();
+        List<string> filterXpaths = new List<string>();
+        List<Guid> filterIds = new List<Guid>();
+        public Action<Guid, string, string[]> onFilter { get; set; }
+        public Action<DataGrab> onFinish { get; set; }
         public DataGrab(Model.Model model)
         {
             this.model = model;
@@ -19,7 +24,16 @@ namespace Library.DataStructure.DataGrab
             root.ModelNodes.Add(model.Root);
             tree.Add(root, null);
         }
-
+        public void SetFilter(params Guid[] guids)
+        {
+            filterIds.Clear();
+            filterIds.AddRange(guids);
+        }
+        public void SetFilter(params string[] xpathes)
+        {
+            filterXpaths.Clear();
+            filterXpaths.AddRange(xpathes);
+        }
         public void Start()
         {
 
