@@ -6,6 +6,6 @@ namespace Library.DataStructure.Model
     internal class Branche : ModelNode
     {
         [DataMember]
-        internal string GrabMethode;
+        internal Method GrabMethode;
     }
 }
