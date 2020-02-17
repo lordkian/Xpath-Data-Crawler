@@ -37,6 +37,28 @@ namespace Library.DataStructure
                 throw new ItemNotFoundException();
             }
         }
+        public void Remove(T data)
+        {
+            if (Root == null)
+                throw new ItemNotFoundException();
+            var list = new List<TreeNode<T>>() { Root };
+            while (list.Count > 0)
+            {
+                foreach (var item in list)
+                    foreach (var item2 in item.Next)
+                        if (item2.Data.Equals(data))
+                        {
+                            item.Next.Remove(item2);
+                        }
+
+                var next = new List<TreeNode<T>>();
+                foreach (var item in list)
+                    next.AddRange(item.Next);
+                list.Clear();
+                list.AddRange(next);
+            }
+            throw new ItemNotFoundException();
+        }
         public List<T> GetLastLine()
         {
             if (Root == null)
