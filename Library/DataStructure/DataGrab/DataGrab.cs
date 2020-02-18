@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using Library.DataStructure.Model;
 
 namespace Library.DataStructure.DataGrab
 {
@@ -36,27 +37,89 @@ namespace Library.DataStructure.DataGrab
         }
         public void Start()
         {
+            RootGrabData();
+        }
+        private void RootGrabData()
+        {
 
         }
-        private void GrabData(DataNode dataNode)
-        { }
-        private static List<List<string>> LoadData(string URL, NameValueCollection data, params string[] xpathes)
+        private List<DataNode> GrabData(DataNode dataNode)
+        {
+            var res = new List<DataNode>();
+
+            for (int i = 0; i < dataNode.ModelNodes.Count; i++)
+            {
+                if (dataNode.ModelNodes[i] is Leaf)
+                    continue;
+                var html = dataNode.Datas[i];
+                var children = model.GetChildren(dataNode.ModelNodes[i]);
+                var xpaths = new List<string>();
+                foreach (var item in children)
+                    xpaths.Add(item.Xpath);
+                var res2 = LoadDataFromHTML(html, xpaths.ToArray());
+                res.AddRange(ParsData(res2, children));
+
+                dataNode.Datas[i] = "";
+            }
+
+            return res;
+        }
+        private List<DataNode> ParsData(List<List<string>> data, List<ModelNode> children)
+        {
+            var res = new List<DataNode>();
+
+            return res;
+        }
+        private string MethodProcess(Method method, string xpathResult)
+        {
+            var url = BuildString(method.URL, xpathResult);
+            var c = method.Keys.Count;
+            if (c == 0)
+                return LoadData(url);
+            var nvc = new NameValueCollection();
+            for (int i = 0; i < c; i++)
+                nvc.Add(BuildString(method.Keys[i], xpathResult), BuildString(method.Values[i], xpathResult));
+            return LoadData(url, nvc);
+        }
+        private string BuildString(List<string> list, string xpathResult)
+        {
+            var res = "";
+            foreach (var item in list)
+            {
+                var value = item.Remove(0, 3);
+                switch (item.Substring(0, 3))
+                {
+                    case "str":
+                        res += value;
+                        break;
+                    case "xpa":
+                        res += xpathResult;
+                        break;
+                    case "bur":
+                        res += model.BaseURL;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return res;
+        }
+        private static string LoadData(string URL, NameValueCollection data)
         {
             if (URL == null || URL.Length == 0)
                 throw new Exception("URL Cannot be null or empty");
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;
             var res = client.UploadValues(URL, "post", data);
-            // var HTML = client.DownloadString(URL);
-            return LoadDataFromHTML(Encoding.UTF8.GetString(res), xpathes);
+            return Encoding.UTF8.GetString(res);
         }
-        private static List<List<string>> LoadData(string URL, params string[] xpathes)
+        private static string LoadData(string URL)
         {
             if (URL == null || URL.Length == 0)
                 throw new Exception("URL Cannot be null or empty");
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;
-            return LoadDataFromHTML(client.DownloadString(URL), xpathes);
+            return client.DownloadString(URL);
         }
         private static List<List<string>> LoadDataFromHTML(string HTML, params string[] xPathes)
         {
