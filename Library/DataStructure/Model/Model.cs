@@ -21,7 +21,7 @@ namespace Library.DataStructure.Model
         internal readonly Dictionary<Guid, ModelNode> GuidToModelNode = new Dictionary<Guid, ModelNode>();
         internal List<ModelNode> GetChildren(ModelNode modelNode)
         { return Tree.GetChildren(modelNode); }
-        public Guid SetRoot(string xpath, string grabMethode = "", bool isURLRelative = true)
+        public Guid SetRoot(string xpath, Method grabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
             Tree.Clear();
@@ -31,7 +31,7 @@ namespace Library.DataStructure.Model
             GuidToModelNode.Add(guid, br);
             return guid;
         }
-        public Guid AddXpath(Guid fatherGuid, string xpath, int childNumber, string grabMethode = "", bool isURLRelative = true)
+        public Guid AddXpath(Guid fatherGuid, string xpath, int childNumber, Method grabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
             var br = new Branche() { GrabMethode = grabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
@@ -40,7 +40,7 @@ namespace Library.DataStructure.Model
             GuidToModelNode.Add(guid, br);
             return guid;
         }
-        public Guid AddXpath(string fatherXpath, string xpath, int childNumber, string grabMethode = "", bool isURLRelative = true)
+        public Guid AddXpath(string fatherXpath, string xpath, int childNumber, Method grabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
             var br = new Branche() { GrabMethode = grabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
