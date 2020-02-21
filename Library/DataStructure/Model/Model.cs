@@ -16,7 +16,7 @@ namespace Library.DataStructure.Model
         public string SiteNmae { get; set; }
         [DataMember]
         public string BaseURL { get; set; }
-        internal ModelNode Root { get { return Tree.TreeRoot; } }
+        internal Branche Root { get { return Tree.TreeRoot as Branche; } }
         internal readonly Dictionary<string, ModelNode> XpathToModelNode = new Dictionary<string, ModelNode>();
         internal readonly Dictionary<Guid, ModelNode> GuidToModelNode = new Dictionary<Guid, ModelNode>();
         internal List<ModelNode> GetChildren(ModelNode modelNode)
