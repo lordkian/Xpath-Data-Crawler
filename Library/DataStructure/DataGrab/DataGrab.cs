@@ -14,13 +14,15 @@ namespace Library.DataStructure.DataGrab
     {
         readonly Model.Model model;
         readonly Tree<DataNode> tree = new Tree<DataNode>();
+        readonly string keyword;
         List<string> filterXpaths = new List<string>();
         List<Guid> filterIds = new List<Guid>();
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
-        public DataGrab(Model.Model model)
+        public DataGrab(Model.Model model, string keyword)
         {
             this.model = model;
+            this.keyword = keyword;
             var root = new DataNode();
             root.ModelNodes.Add(model.Root);
             tree.Add(root, null);
@@ -37,11 +39,28 @@ namespace Library.DataStructure.DataGrab
         }
         public void Start()
         {
-            RootGrabData();
-        }
-        private void RootGrabData()
-        {
+            var root = RootGrabData();
+            tree.Add(root, null);
 
+            var list = new List<DataNode>() { root };
+            var list2 = new List<DataNode>();
+            while (list.Count > 0)
+            {
+                foreach (var item in list)
+                    list2.AddRange(GrabData(item));
+                list.Clear();
+                list.AddRange(list2);
+                list2.Clear();
+            }
+            onFinish(this);
+        }
+        private DataNode RootGrabData()
+        {
+            var html = MethodProcess(model.Root.GrabMethode, keyword);
+            var dn = new DataNode();
+            dn.Datas.Add(html);
+            dn.ModelNodes.Add(model.Root);
+            return dn;
         }
         private List<DataNode> GrabData(DataNode dataNode)
         {
