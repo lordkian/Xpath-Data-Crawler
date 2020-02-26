@@ -1,4 +1,5 @@
 ﻿using com.MovieAssistant.core.DataStructure;
+using Library.DataStructure.DataGrab;
 using Library.DataStructure.Model;
 using System;
 using System.Collections.Generic;
@@ -31,15 +32,19 @@ namespace test1
             m.Values.Add(new List<string>() { "xpath" });
             var rootGuid = model.SetRoot(m);
 
-            model.AddItem(rootGuid, "//div[@class='title']/a", "Name", LeafType.Data, false);
+            var f1Guid = model.AddItem(rootGuid, "//div[@class='title']/a", "Name", LeafType.Data, false);
             model.AddItem(rootGuid, @"//div[@class='subtle count']", "Count", LeafType.Data, false);
             var guid1 = model.AddXpath(rootGuid, "//div[@class='title']/a/@href");
 
             model.AddItem(guid1, @"//td[@class='a1']/a/span[not(@class)]", "Subtitle Name", LeafType.Data, false);
-            model.AddItem(guid1, "//td[@class='a1']/a/span[@class]", "Language", LeafType.Data, false);
+            var f2Guid = model.AddItem(guid1, "//td[@class='a1']/a/span[@class]", "Language", LeafType.Data, false);
             var guid2 = model.AddXpath(guid1, "//td[@class='a1']/a/@href");
 
             model.AddItem(guid2, "//div [@class='download']/a/@href", "subtitle.zip", LeafType.Downloadable, true);
+
+            DataGrab dataGrab = new DataGrab(model, "Friends");
+            dataGrab.SetFilter(f1Guid, f2Guid);
+            dataGrab.Start();
 
             // model.Save("kian.json", SaveType.JSON);
             //var model = Model.Load("kian.json");
