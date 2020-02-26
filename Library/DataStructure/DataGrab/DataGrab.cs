@@ -23,9 +23,6 @@ namespace Library.DataStructure.DataGrab
         {
             this.model = model;
             this.keyword = keyword;
-            var root = new DataNode();
-            root.ModelNodes.Add(model.Root);
-            tree.Add(root, null);
         }
         public void SetFilter(params Guid[] guids)
         {
@@ -37,13 +34,17 @@ namespace Library.DataStructure.DataGrab
             filterXpaths.Clear();
             filterXpaths.AddRange(xpathes);
         }
+        List<DataNode> list = new List<DataNode>();
+        List<DataNode> list2 = new List<DataNode>();
         public void Start()
         {
             var root = RootGrabData();
-            tree.Add(root, null);
 
-            var list = new List<DataNode>() { root };
-            var list2 = new List<DataNode>();
+            list.Add(root);
+            Continue();
+        }
+        public void Continue()
+        {
             while (list.Count > 0)
             {
                 foreach (var item in list)
@@ -56,10 +57,10 @@ namespace Library.DataStructure.DataGrab
         }
         private DataNode RootGrabData()
         {
-            var html = MethodProcess(model.Root.GrabMethode, keyword);
             var dn = new DataNode();
-            dn.Datas.Add(html);
+            dn.Datas.Add(keyword);
             dn.ModelNodes.Add(model.Root);
+            tree.Add(dn, null);
             return dn;
         }
         private List<DataNode> GrabData(DataNode dataNode)
@@ -70,14 +71,17 @@ namespace Library.DataStructure.DataGrab
             {
                 if (dataNode.ModelNodes[i] is Leaf)
                     continue;
-                var html = dataNode.Datas[i];
+
+                var html = MethodProcess((dataNode.ModelNodes[i] as Branche).GrabMethode, dataNode.Datas[i]);
                 var children = model.GetChildren(dataNode.ModelNodes[i]);
                 var xpaths = new List<string>();
                 foreach (var item in children)
                     xpaths.Add(item.Xpath);
                 var res2 = LoadDataFromHTML(html, xpaths.ToArray());
-                res.AddRange(ParsData(res2, children));
-
+                var dns = ParsData(res2, children);
+                res.AddRange(dns);
+                foreach (var item in dns)
+                    tree.Add(item, dataNode);
                 dataNode.Datas[i] = "";
             }
 
@@ -86,7 +90,13 @@ namespace Library.DataStructure.DataGrab
         private List<DataNode> ParsData(List<List<string>> data, List<ModelNode> children)
         {
             var res = new List<DataNode>();
-
+            foreach (var item in data)
+            {
+                var dn = new DataNode();
+                dn.Datas.AddRange(item);
+                dn.ModelNodes.AddRange(children);
+                res.Add(dn);
+            }
             return res;
         }
         private string MethodProcess(Method method, string xpathResult)
