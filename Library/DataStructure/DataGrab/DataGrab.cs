@@ -17,6 +17,9 @@ namespace Library.DataStructure.DataGrab
         readonly string keyword;
         List<string> filterXpaths = new List<string>();
         List<Guid> filterIds = new List<Guid>();
+        Dictionary<string, List<DataNode>> filterXpathsDic = new Dictionary<string, List<DataNode>>();
+        Dictionary<Guid, List<DataNode>> filterIdsDic = new Dictionary<Guid, List<DataNode>>();
+        bool FilterOn = false;
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
         public DataGrab(Model.Model model, string keyword)
@@ -28,25 +31,58 @@ namespace Library.DataStructure.DataGrab
         {
             filterIds.Clear();
             filterIds.AddRange(guids);
+            filterIdsDic.Clear();
+            foreach (var item in guids)
+                filterIdsDic.Add(item, new List<DataNode>());
         }
         public void SetFilter(params string[] xpathes)
         {
             filterXpaths.Clear();
             filterXpaths.AddRange(xpathes);
+            filterXpathsDic.Clear();
+            foreach (var item in xpathes)
+                filterXpathsDic.Add(item, new List<DataNode>());
         }
         List<DataNode> list = new List<DataNode>();
         List<DataNode> list2 = new List<DataNode>();
         public void Start()
         {
             var root = RootGrabData();
-
             list.Add(root);
             Continue();
         }
         public void Continue()
         {
+            if (FilterOn)
+            {
+                StratFilterAction();
+                return;
+            }
+
             while (list.Count > 0)
             {
+                foreach (var item in list)
+                {
+                    foreach (var item2 in item.ModelNodes)
+                    {
+                        if (filterXpaths.Contains(item2.Xpath))
+                        {
+                            FilterOn = true;
+                            filterXpathsDic[item2.Xpath].Add(item);
+                        }
+                        if (filterIds.Contains(item2.Id))
+                        {
+                            FilterOn = true;
+                            filterIdsDic[item2.Id].Add(item);
+                        }
+                    }
+                }
+
+                if (FilterOn)
+                {
+                    StratFilterAction();
+                    return;
+                }
                 foreach (var item in list)
                     list2.AddRange(GrabData(item));
                 list.Clear();
@@ -54,6 +90,34 @@ namespace Library.DataStructure.DataGrab
                 list2.Clear();
             }
             onFinish(this);
+        }
+        private void StratFilterAction()
+        {
+            if (!FilterOn)
+                return;
+
+            foreach (var item in filterXpaths)
+                if (filterXpathsDic[item].Count > 0)
+                {
+                    var guid = model.XpathToModelNode[item].Id;
+                    int i = filterXpathsDic[item][0].ModelNodes.IndexOf(model.XpathToModelNode[item]);
+                    var datas = new List<string>();
+                    foreach (var item2 in filterXpathsDic[item])
+                        datas.Add(item2.Datas[i]);
+                    onFilter(guid, item, datas.ToArray());
+                    return;
+                }
+            foreach (var item in filterIds)
+                if (filterIdsDic[item].Count > 0)
+                {
+                    var xpath = model.GuidToModelNode[item].Xpath;
+                    int i = filterIdsDic[item][0].ModelNodes.IndexOf(model.GuidToModelNode[item]);
+                    var datas = new List<string>();
+                    foreach (var item2 in filterIdsDic[item])
+                        datas.Add(item2.Datas[i]);
+                    onFilter(item, xpath, datas.ToArray());
+                    return;
+                }
         }
         private DataNode RootGrabData()
         {
