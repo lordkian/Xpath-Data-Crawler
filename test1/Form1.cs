@@ -14,6 +14,7 @@ namespace test1
     public partial class Form1 : Form
     {
         Data data;
+        DataGrab dataGrab = null;
         public Form1()
         {
             InitializeComponent();
@@ -25,7 +26,6 @@ namespace test1
                 BaseURL = "https://subscene.com",
                 SiteNmae = "subscene"
             };
-            //model.AddNameValueCollection(model.RootGuid, "query", "@SearchWord");
             var m = new Method();
             m.URL.Add("strhttps://subscene.com/subtitles/searchbytitle");
             m.Keys.Add(new List<string>() { "strquery" });
@@ -42,24 +42,30 @@ namespace test1
 
             model.AddItem(guid2, "//div [@class='download']/a/@href", "subtitle.zip", LeafType.Downloadable, true);
 
-            DataGrab dataGrab = new DataGrab(model, "Friends");
+            dataGrab = new DataGrab(model, "Friends");
             dataGrab.SetFilter(f1Guid, f2Guid);
+            dataGrab.onFilter = OnFilter;
             dataGrab.Start();
 
-            // model.Save("kian.json", SaveType.JSON);
-            //var model = Model.Load("kian.json");
-
-            /* data = new Data(model, textBox1.Text);
-             data.SetFilter("//div[@class='title']/a", "//td[@class='a1']/a/span[@class]");
-             data.onFilter = (list) => { listBox1.Items.Clear(); listBox1.Items.AddRange(list); };
-             string path = textBox2.Text;*/
-
+            button1.Click -= Button1_Click;
 
         }
-        private void ListBox1_DoubleClick(object sender, EventArgs e)
+        private void Button1_Click2(object sender, EventArgs e)
         {
-            data.Filter(listBox1.SelectedItem as string);
-            data.Continue();
+            var data = new List<string>();
+            foreach (var item in checkedListBox1.SelectedItems)
+            {
+                data.Add(item.ToString());
+            }
+            dataGrab.Filter(true, data.ToArray());
+            button1.Click -= Button1_Click2;
+        }
+        private void OnFilter(Guid id, string xpath, string[] data)
+        {
+            if (button1.Text != "continue")
+                button1.Text = "continue";
+            button1.Click += Button1_Click2;
+            checkedListBox1.Items.AddRange(data);
         }
         private void Button2_Click(object sender, EventArgs e)
         {
