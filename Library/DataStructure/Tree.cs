@@ -44,13 +44,19 @@ namespace Library.DataStructure
             var list = new List<TreeNode<T>>() { Root };
             while (list.Count > 0)
             {
+                TreeNode<T> father = null, son = null;
                 foreach (var item in list)
                     foreach (var item2 in item.Next)
                         if (item2.Data.Equals(data))
                         {
-                            item.Next.Remove(item2);
+                            father = item;
+                            son = item2;
                         }
-
+                if (father != null)
+                {
+                    father.Next.Remove(son);
+                    return;
+                }
                 var next = new List<TreeNode<T>>();
                 foreach (var item in list)
                     next.AddRange(item.Next);
