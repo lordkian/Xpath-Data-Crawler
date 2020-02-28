@@ -27,6 +27,48 @@ namespace Library.DataStructure.DataGrab
             this.model = model;
             this.keyword = keyword;
         }
+        public void Filter(Guid id, bool keep, params string[] datas)
+        {
+            int index = filterIdsDic[id][0].ModelNodes.IndexOf(model.GuidToModelNode[id]);
+            foreach (var item in filterIdsDic[id])
+            {
+                if (datas.Contains(item.Datas[index]) ^ keep)
+                    RemoveDataNode(item);
+            }
+            filterIdsDic.Remove(id);
+            filterIds.Remove(id);
+            FilterOff();
+        }
+        public void Filter(string xpath, bool keep, params string[] datas)
+        {
+            int index = filterXpathsDic[xpath][0].ModelNodes.IndexOf(model.XpathToModelNode[xpath]);
+            foreach (var item in filterXpathsDic[xpath])
+            {
+                if (datas.Contains(item.Datas[index]) ^ keep)
+                    RemoveDataNode(item);
+            }
+            filterXpathsDic.Remove(xpath);
+            filterXpaths.Remove(xpath);
+            FilterOff();
+        }
+        private void RemoveDataNode(DataNode dataNode)
+        {
+            tree.Remove(dataNode);
+            if (list.Contains(dataNode))
+                list.Remove(dataNode);
+            if (list2.Contains(dataNode))
+                list2.Remove(dataNode);
+        }
+        private void FilterOff()
+        {
+            foreach (var item in filterIds)
+                if (filterIdsDic[item].Count > 0)
+                    return;
+            foreach (var item in filterXpaths)
+                if (filterXpathsDic[item].Count > 0)
+                    return;
+            FilterOn = false;
+        }
         public void SetFilter(params Guid[] guids)
         {
             filterIds.Clear();
@@ -54,10 +96,7 @@ namespace Library.DataStructure.DataGrab
         public void Continue()
         {
             if (FilterOn)
-            {
-                StratFilterAction();
                 return;
-            }
 
             while (list.Count > 0)
             {
@@ -165,6 +204,8 @@ namespace Library.DataStructure.DataGrab
         }
         private string MethodProcess(Method method, string xpathResult)
         {
+            if (method == null)
+                return LoadData(model.BaseURL + "/" + xpathResult);
             var url = BuildString(method.URL, xpathResult);
             var c = method.Keys.Count;
             if (c == 0)

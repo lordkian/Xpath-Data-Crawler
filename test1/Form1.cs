@@ -4,6 +4,7 @@ using Library.DataStructure.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
@@ -15,6 +16,7 @@ namespace test1
     {
         Data data;
         DataGrab dataGrab = null;
+        Guid Guid = new Guid();
         public Form1()
         {
             InitializeComponent();
@@ -37,12 +39,12 @@ namespace test1
             var guid1 = model.AddXpath(rootGuid, "//div[@class='title']/a/@href");
 
             model.AddItem(guid1, @"//td[@class='a1']/a/span[not(@class)]", "Subtitle Name", LeafType.Data, false);
-            var f2Guid = model.AddItem(guid1, "//td[@class='a1']/a/span[@class]", "Language", LeafType.Data, false);
+            var f2Guid = model.AddItem(guid1, "//td[@class='a1']/a/span[@class='l r positive-icon']", "Language", LeafType.Data, false);
             var guid2 = model.AddXpath(guid1, "//td[@class='a1']/a/@href");
 
             model.AddItem(guid2, "//div [@class='download']/a/@href", "subtitle.zip", LeafType.Downloadable, true);
 
-            dataGrab = new DataGrab(model, "Friends");
+            dataGrab = new DataGrab(model, textBox1.Text);
             dataGrab.SetFilter(f1Guid, f2Guid);
             dataGrab.onFilter = OnFilter;
             dataGrab.Start();
@@ -57,15 +59,18 @@ namespace test1
             {
                 data.Add(item.ToString());
             }
-            dataGrab.Filter(true, data.ToArray());
+            dataGrab.Filter(Guid, true, data.ToArray());
             button1.Click -= Button1_Click2;
+            dataGrab.Continue();
         }
         private void OnFilter(Guid id, string xpath, string[] data)
         {
+            Guid = id;
             if (button1.Text != "continue")
                 button1.Text = "continue";
-            button1.Click += Button1_Click2;
-            checkedListBox1.Items.AddRange(data);
+            button1.Click += Button1_Click2; 
+            checkedListBox1.Items.Clear();
+            checkedListBox1.Items.AddRange(data.Distinct().ToArray());
         }
         private void Button2_Click(object sender, EventArgs e)
         {
