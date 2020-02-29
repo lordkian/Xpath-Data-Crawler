@@ -185,7 +185,6 @@ namespace Library.DataStructure.DataGrab
                 res.AddRange(dns);
                 foreach (var item in dns)
                     tree.Add(item, dataNode);
-                dataNode.Datas[i] = "";
             }
 
             return res;
