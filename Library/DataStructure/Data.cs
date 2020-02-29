@@ -18,13 +18,13 @@ namespace com.MovieAssistant.core.DataStructure
         private LeafModel TmpFilterKey = null;
         private int TmpIndex = -1;
         bool IsFilterd = false;
-        public Model Model { get; set; }
+        public old_Model Model { get; set; }
         internal NodePackage Root { get; set; }
         public Action<string[]> onFilter { get; set; }
         public Action<Data> onFinish { get; set; }
         private Data()
         { }
-        public Data(Model model, string searchKey)
+        public Data(old_Model model, string searchKey)
         {
             Model = model;
             Root = new NodePackage() { SubDatas = new Node[] { new Node() { NodeModel = model.Root } } };

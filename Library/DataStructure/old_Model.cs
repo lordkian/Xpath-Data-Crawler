@@ -1,5 +1,6 @@
 ﻿using com.MovieAssistant.core;
 using com.MovieAssistant.core.Exceptions;
+using Library.DataStructure.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,8 @@ using System.Runtime.Serialization;
 
 namespace com.MovieAssistant.core.DataStructure
 {
-    public enum SaveType { XML, JSON, Binary };
     [DataContract]
-    public class Model
+    public class old_Model
     {
         [DataMember]
         internal BrancheModle Root;
@@ -119,14 +119,13 @@ namespace com.MovieAssistant.core.DataStructure
                     break;
             }
         }
-        public static Model Load(string path)
+        public static old_Model Load(string path)
         {
             var sr = new StreamReader(path);
-            var res = JsonConvert.DeserializeObject<Model>(sr.ReadToEnd());
+            var res = JsonConvert.DeserializeObject<old_Model>(sr.ReadToEnd());
             res.NodeModelToXpath.Add(res.Root, res.Root.Xpath);
             res.NodeModelToGuid.Add(res.Root, res.Root.Guid);
             return res;
         }
     }
-    public enum LeafType { Downloadable, Data, FinalData }
 }
