@@ -14,7 +14,6 @@ namespace test1
 {
     public partial class Form1 : Form
     {
-        Data data;
         DataGrab dataGrab = null;
         Guid Guid = new Guid();
         public Form1()
@@ -47,6 +46,7 @@ namespace test1
             dataGrab = new DataGrab(model, textBox1.Text);
             dataGrab.SetFilter(f1Guid, f2Guid);
             dataGrab.onFilter = OnFilter;
+            dataGrab.onFinish = Finish;
             dataGrab.Start();
 
             button1.Click -= Button1_Click;
@@ -68,9 +68,13 @@ namespace test1
             Guid = id;
             if (button1.Text != "continue")
                 button1.Text = "continue";
-            button1.Click += Button1_Click2; 
+            button1.Click += Button1_Click2;
             checkedListBox1.Items.Clear();
             checkedListBox1.Items.AddRange(data.Distinct().ToArray());
+        }
+        private void Finish(DataGrab dataGrab)
+        {
+
         }
         private void Button2_Click(object sender, EventArgs e)
         {
