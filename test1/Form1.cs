@@ -1,14 +1,9 @@
-﻿using com.MovieAssistant.core.DataStructure;
-using Library.DataStructure.DataGrab;
+﻿using Library.DataStructure.DataGrab;
 using Library.DataStructure.Model;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Windows.Forms;
-using ValueType = com.MovieAssistant.core.DataStructure.ValueType;
 
 namespace test1
 {
