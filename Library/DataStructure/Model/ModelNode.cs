@@ -7,10 +7,12 @@ namespace Library.DataStructure.Model
     internal abstract class ModelNode
     {
         [DataMember]
-        public bool IsURLRelative { get; set; }
+        internal bool IsURLRelative { get; set; }
         [DataMember]
-        public Guid Id { get; set; }
+        internal Guid Id { get; set; }
         [DataMember]
-        public string Xpath { get; set; }
+        internal string Xpath { get; set; }
+        [DataMember]
+        internal Method URLGrabMethode;
     }
 }

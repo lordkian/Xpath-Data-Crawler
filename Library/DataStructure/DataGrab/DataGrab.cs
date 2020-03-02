@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -84,6 +85,21 @@ namespace Library.DataStructure.DataGrab
             filterXpathsDic.Clear();
             foreach (var item in xpathes)
                 filterXpathsDic.Add(item, new List<DataNode>());
+        }
+        public void Download(string path)
+        {
+            var modelnodes = model.GetDownloadableNodes();
+            foreach (var item in tree.GetAll())
+            {
+                var mn = item.ModelNodes.Intersect(modelnodes).ToList();
+                if (mn.Count() == 0)
+                    continue;
+                foreach (var item2 in mn)
+                {
+                    int index = mn.IndexOf(item2);
+                    MethodProcessDownload(item2.URLGrabMethode, item.Datas[index], path);
+                }
+            }
         }
         List<DataNode> list = new List<DataNode>();
         List<DataNode> list2 = new List<DataNode>();
@@ -175,7 +191,7 @@ namespace Library.DataStructure.DataGrab
                 if (dataNode.ModelNodes[i] is Leaf)
                     continue;
 
-                var html = MethodProcess((dataNode.ModelNodes[i] as Branche).GrabMethode, dataNode.Datas[i]);
+                var html = MethodProcess((dataNode.ModelNodes[i] as Branche).URLGrabMethode, dataNode.Datas[i]);
                 var children = model.GetChildren(dataNode.ModelNodes[i]);
                 var xpaths = new List<string>();
                 foreach (var item in children)
@@ -213,6 +229,25 @@ namespace Library.DataStructure.DataGrab
             for (int i = 0; i < c; i++)
                 nvc.Add(BuildString(method.Keys[i], xpathResult), BuildString(method.Values[i], xpathResult));
             return LoadData(url, nvc);
+        }
+        private void MethodProcessDownload(Method method, string xpathResult, string path)
+        {
+            if (method == null)
+            {
+                DownloadData(model.BaseURL + "/" + xpathResult, path);
+                return;
+            }
+            var url = BuildString(method.URL, xpathResult);
+            var c = method.Keys.Count;
+            if (c == 0)
+            {
+                DownloadData(url, path);
+                return;
+            }
+            var nvc = new NameValueCollection();
+            for (int i = 0; i < c; i++)
+                nvc.Add(BuildString(method.Keys[i], xpathResult), BuildString(method.Values[i], xpathResult));
+            DownloadData(url, nvc, path);
         }
         private string BuildString(List<string> list, string xpathResult)
         {
@@ -253,6 +288,25 @@ namespace Library.DataStructure.DataGrab
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;
             return client.DownloadString(URL);
+        }
+        private static void DownloadData(string URL, NameValueCollection data, string path)//not working
+        {
+            if (URL == null || URL.Length == 0)
+                throw new Exception("URL Cannot be null or empty");
+            var client = new WebClient();
+            client.Encoding = Encoding.UTF8;
+            var res = client.UploadValues(URL, "post", data);
+            // return Encoding.UTF8.GetString(res);
+        }
+        private static void DownloadData(string URL, string path)
+        {
+            if (URL == null || URL.Length == 0)
+                throw new Exception("URL Cannot be null or empty");
+            var client = new WebClient();
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];
+            client.DownloadFile(URL, path + "\\" + filename);
         }
         private static List<List<string>> LoadDataFromHTML(string HTML, params string[] xPathes)
         {
