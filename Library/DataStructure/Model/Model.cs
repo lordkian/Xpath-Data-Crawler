@@ -25,7 +25,7 @@ namespace Library.DataStructure.Model
         {
             var guid = Guid.NewGuid();
             Tree.Clear();
-            var br = new Branche() { GrabMethode = grabMethode, Id = guid, Xpath = " ", IsURLRelative = isURLRelative };
+            var br = new Branche() { URLGrabMethode = grabMethode, Id = guid, Xpath = " ", IsURLRelative = isURLRelative };
             Tree.Add(br, null);
             XpathToModelNode.Add(" ", br);
             GuidToModelNode.Add(guid, br);
@@ -34,7 +34,7 @@ namespace Library.DataStructure.Model
         public Guid AddXpath(Guid fatherGuid, string xpath, Method grabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
-            var br = new Branche() { GrabMethode = grabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
+            var br = new Branche() { URLGrabMethode = grabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
             Tree.Add(br, GuidToModelNode[fatherGuid]);
             XpathToModelNode.Add(xpath, br);
             GuidToModelNode.Add(guid, br);
@@ -43,13 +43,13 @@ namespace Library.DataStructure.Model
         public Guid AddXpath(string fatherXpath, string xpath, Method grabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
-            var br = new Branche() { GrabMethode = grabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
+            var br = new Branche() { URLGrabMethode = grabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
             Tree.Add(br, XpathToModelNode[fatherXpath]);
             XpathToModelNode.Add(xpath, br);
             GuidToModelNode.Add(guid, br);
             return guid;
         }
-        public Guid AddItem(Guid fatherGuid, string xpath, string name, LeafType type, bool isUnique, bool isURLRelative = true)
+        public Guid AddItem(Guid fatherGuid, string xpath, string name, LeafType type, bool isUnique, Method grabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
             var l = new Leaf() { Id = guid, Xpath = xpath, IsURLRelative = isURLRelative, IsUniqe = isUnique, Type = type, Name = name };
@@ -58,7 +58,7 @@ namespace Library.DataStructure.Model
             GuidToModelNode.Add(guid, l);
             return guid;
         }
-        public Guid AddItem(string fatherXpath, string xpath, string name, LeafType type, bool isUnique, bool isURLRelative = true)
+        public Guid AddItem(string fatherXpath, string xpath, string name, LeafType type, bool isUnique, Method grabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
             var l = new Leaf() { Id = guid, Xpath = xpath, IsURLRelative = isURLRelative, IsUniqe = isUnique, Type = type, Name = name };

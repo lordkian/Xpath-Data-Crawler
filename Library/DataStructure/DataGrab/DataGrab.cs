@@ -175,7 +175,7 @@ namespace Library.DataStructure.DataGrab
                 if (dataNode.ModelNodes[i] is Leaf)
                     continue;
 
-                var html = MethodProcess((dataNode.ModelNodes[i] as Branche).GrabMethode, dataNode.Datas[i]);
+                var html = MethodProcess((dataNode.ModelNodes[i] as Branche).URLGrabMethode, dataNode.Datas[i]);
                 var children = model.GetChildren(dataNode.ModelNodes[i]);
                 var xpaths = new List<string>();
                 foreach (var item in children)
