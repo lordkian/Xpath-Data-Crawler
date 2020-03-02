@@ -2,6 +2,7 @@
 using Library.DataStructure.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -69,7 +70,9 @@ namespace test1
         }
         private void Finish(DataGrab dataGrab)
         {
-
+            if (!Directory.Exists(textBox2.Text))
+                Directory.CreateDirectory(textBox2.Text);
+            dataGrab.Download(textBox2.Text);
         }
         private void Button2_Click(object sender, EventArgs e)
         {
