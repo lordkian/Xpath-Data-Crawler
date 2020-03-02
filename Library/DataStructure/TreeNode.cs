@@ -18,5 +18,12 @@ namespace Library.DataStructure
         {
             return Data.ToString();
         }
+        public TreeNode<T> Copy()
+        {
+            var t = new TreeNode<T>(Data);
+            foreach (var item in Next)
+                t.Next.Add(item.Copy());
+            return t;
+        }
     }
 }

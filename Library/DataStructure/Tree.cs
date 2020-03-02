@@ -148,7 +148,7 @@ namespace Library.DataStructure
                 {
                     foreach (var item in list)
                         if (item.Data.Equals(RootData))
-                            return new Tree<T>() { Root = item };
+                            return new Tree<T>() { Root = item.Copy() };
 
                     var next = new List<TreeNode<T>>();
                     foreach (var item in list)
