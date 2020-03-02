@@ -137,5 +137,27 @@ namespace Library.DataStructure
         {
             Root = null;
         }
+        public Tree<T> GetSubTree(T RootData)
+        {
+            if (Root == null)
+                throw new EmptyTreeExeption();
+            else
+            {
+                var list = new List<TreeNode<T>>() { Root };
+                while (list.Count > 0)
+                {
+                    foreach (var item in list)
+                        if (item.Data.Equals(RootData))
+                            return new Tree<T>() { Root = item };
+
+                    var next = new List<TreeNode<T>>();
+                    foreach (var item in list)
+                        next.AddRange(item.Next);
+                    list.Clear();
+                    list.AddRange(next);
+                }
+                throw new ItemNotFoundException();
+            }
+        }
     }
 }
