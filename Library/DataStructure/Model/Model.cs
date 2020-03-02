@@ -21,6 +21,14 @@ namespace Library.DataStructure.Model
         internal readonly Dictionary<Guid, ModelNode> GuidToModelNode = new Dictionary<Guid, ModelNode>();
         internal List<ModelNode> GetChildren(ModelNode modelNode)
         { return Tree.GetChildren(modelNode); }
+        internal List<ModelNode> GetDownloadableNodes()
+        {
+            var res = new List<ModelNode>();
+            foreach (var item in Tree.GetAll())
+                if (item is Leaf && (item as Leaf).Type == LeafType.Downloadable)
+                    res.Add(item);
+            return res;
+        }
         public Guid SetRoot(Method grabMethode, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
