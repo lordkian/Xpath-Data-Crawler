@@ -31,37 +31,37 @@ namespace Library.DataStructure.Model
             GuidToModelNode.Add(guid, br);
             return guid;
         }
-        public Guid AddXpath(Guid fatherGuid, string xpath, Method grabMethode = null, bool isURLRelative = true)
+        public Guid AddXpath(Guid fatherGuid, string xpath, Method URLGrabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
-            var br = new Branche() { URLGrabMethode = grabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
+            var br = new Branche() { URLGrabMethode = URLGrabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
             Tree.Add(br, GuidToModelNode[fatherGuid]);
             XpathToModelNode.Add(xpath, br);
             GuidToModelNode.Add(guid, br);
             return guid;
         }
-        public Guid AddXpath(string fatherXpath, string xpath, Method grabMethode = null, bool isURLRelative = true)
+        public Guid AddXpath(string fatherXpath, string xpath, Method URLGrabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
-            var br = new Branche() { URLGrabMethode = grabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
+            var br = new Branche() { URLGrabMethode = URLGrabMethode, Id = guid, Xpath = xpath, IsURLRelative = isURLRelative };
             Tree.Add(br, XpathToModelNode[fatherXpath]);
             XpathToModelNode.Add(xpath, br);
             GuidToModelNode.Add(guid, br);
             return guid;
         }
-        public Guid AddItem(Guid fatherGuid, string xpath, string name, LeafType type, bool isUnique, Method grabMethode = null, bool isURLRelative = true)
+        public Guid AddItem(Guid fatherGuid, string xpath, string name, LeafType type, bool isUnique, Method URLGrabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
-            var l = new Leaf() { Id = guid, Xpath = xpath, IsURLRelative = isURLRelative, IsUniqe = isUnique, Type = type, Name = name };
+            var l = new Leaf() { Id = guid, Xpath = xpath, IsURLRelative = isURLRelative, IsUniqe = isUnique, Type = type, Name = name, URLGrabMethode = URLGrabMethode };
             Tree.Add(l, GuidToModelNode[fatherGuid]);
             XpathToModelNode.Add(xpath, l);
             GuidToModelNode.Add(guid, l);
             return guid;
         }
-        public Guid AddItem(string fatherXpath, string xpath, string name, LeafType type, bool isUnique, Method grabMethode = null, bool isURLRelative = true)
+        public Guid AddItem(string fatherXpath, string xpath, string name, LeafType type, bool isUnique, Method URLGrabMethode = null, bool isURLRelative = true)
         {
             var guid = Guid.NewGuid();
-            var l = new Leaf() { Id = guid, Xpath = xpath, IsURLRelative = isURLRelative, IsUniqe = isUnique, Type = type, Name = name };
+            var l = new Leaf() { Id = guid, Xpath = xpath, IsURLRelative = isURLRelative, IsUniqe = isUnique, Type = type, Name = name, URLGrabMethode = URLGrabMethode };
             Tree.Add(l, XpathToModelNode[fatherXpath]);
             XpathToModelNode.Add(xpath, l);
             GuidToModelNode.Add(guid, l);
