@@ -86,9 +86,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Library\Library.csproj">
+    <ProjectReference Include="..\Library\XpathDataCrawler.csproj">
       <Project>{ca6d95e8-0d5e-4b0b-a294-9ae9df1a73a3}</Project>
-      <Name>Library</Name>
+      <Name>XpathDataCrawler</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
