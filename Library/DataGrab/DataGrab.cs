@@ -9,11 +9,11 @@ using HtmlAgilityPack;
 using XpathDataCrawler.DataStructure.Model;
 using XpathDataCrawler.DataStructure;
 
-namespace XpathDataCrawler.DataStructure.DataGrab
+namespace XpathDataCrawler.DataGrab
 {
     public class DataGrab
     {
-        readonly Model.Model model;
+        readonly Model model;
         readonly Tree<DataNode> tree = new Tree<DataNode>();
         readonly string keyword;
         List<string> filterXpaths = new List<string>();
@@ -23,7 +23,7 @@ namespace XpathDataCrawler.DataStructure.DataGrab
         bool FilterOn = false;
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
-        public DataGrab(Model.Model model, string keyword)
+        public DataGrab(Model model, string keyword)
         {
             this.model = model;
             this.keyword = keyword;

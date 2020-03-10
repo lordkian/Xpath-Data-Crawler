@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using XpathDataCrawler.DataStructure.Model;
 
-namespace XpathDataCrawler.DataStructure.DataGrab
+namespace XpathDataCrawler.DataGrab
 {
     internal class DataNode
     {
