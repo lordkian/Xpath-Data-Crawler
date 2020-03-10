@@ -1,10 +1,10 @@
-﻿using Library.DataStructure.DataGrab;
-using Library.DataStructure.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using XpathDataCrawler.DataGrab;
+using XpathDataCrawler.DataStructure.Model;
 
 namespace test1
 {

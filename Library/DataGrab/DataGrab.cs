@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
-using Library.DataStructure.Model;
+using XpathDataCrawler.DataStructure.Model;
+using XpathDataCrawler.DataStructure;
 
-namespace Library.DataStructure.DataGrab
+namespace XpathDataCrawler.DataGrab
 {
     public class DataGrab
     {
-        readonly Model.Model model;
+        readonly Model model;
         readonly Tree<DataNode> tree = new Tree<DataNode>();
         readonly string keyword;
         List<string> filterXpaths = new List<string>();
@@ -23,7 +23,7 @@ namespace Library.DataStructure.DataGrab
         bool FilterOn = false;
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
-        public DataGrab(Model.Model model, string keyword)
+        public DataGrab(Model model, string keyword)
         {
             this.model = model;
             this.keyword = keyword;

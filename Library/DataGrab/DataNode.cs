@@ -1,9 +1,7 @@
-﻿using Library.DataStructure.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using XpathDataCrawler.DataStructure.Model;
 
-namespace Library.DataStructure.DataGrab
+namespace XpathDataCrawler.DataGrab
 {
     internal class DataNode
     {

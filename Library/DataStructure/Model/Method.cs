@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Library.DataStructure.Model
+namespace XpathDataCrawler.DataStructure.Model
 {
     public class Method
     {

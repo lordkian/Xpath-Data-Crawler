@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Library.DataStructure.Model
+namespace XpathDataCrawler.DataStructure.Model
 {
     public enum LeafType { Downloadable, Data, FinalData }
     public enum SaveType { XML, JSON, Binary };

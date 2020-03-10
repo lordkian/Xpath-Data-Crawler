@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Library.DataStructure.Model
+namespace XpathDataCrawler.DataStructure.Model
 {
     [DataContract]
     internal abstract class ModelNode
