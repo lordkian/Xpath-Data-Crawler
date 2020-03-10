@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Library.DataStructure
+namespace XpathDataCrawler.DataStructure
 {
     [DataContract]
     internal class TreeNode<T>

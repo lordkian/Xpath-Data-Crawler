@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Library.DataStructure.Model
+namespace XpathDataCrawler.DataStructure.Model
 {
     [DataContract]
     internal class Leaf : ModelNode

@@ -1,4 +1,4 @@
-﻿namespace Library.DataStructure.Model
+﻿namespace XpathDataCrawler.DataStructure.Model
 {
     internal class Branche : ModelNode { }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace com.MovieAssistant.core.Exceptions
+namespace XpathDataCrawler.DataStructure.Exceptions
 {
     public class GuidNotFoundException : Exception { }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Library.DataStructure
+namespace XpathDataCrawler.DataStructure.Exceptions
 {
     class EmptyTreeExeption : Exception { }
 }

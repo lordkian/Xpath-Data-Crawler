@@ -1,10 +1,8 @@
-﻿using Library.Exceptions;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
+using XpathDataCrawler.DataStructure.Exceptions;
 
-namespace Library.DataStructure
+namespace XpathDataCrawler.DataStructure
 {
     [DataContract]
     public class Tree<T>

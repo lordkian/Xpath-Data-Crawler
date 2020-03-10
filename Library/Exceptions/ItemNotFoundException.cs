@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Library.Exceptions
+namespace XpathDataCrawler.DataStructure.Exceptions
 {
     class ItemNotFoundException : Exception { }
 }
