@@ -9,16 +9,8 @@ namespace PostFileDownload.Controllers
         [HttpPost]
         public IActionResult DownloadFile([FromBody] string fileName)
         {
-            if (fileName == null)
-            {
-                return null;
-            }
-            else
-            {
-                Stream stream = System.IO.File.Open($"wwwroot/{fileName}", FileMode.Open);
-                return new FileStreamResult(stream, "application/octet-stream") { FileDownloadName = fileName };
-            }
-
+            Stream stream = System.IO.File.Open($"wwwroot/{fileName}", FileMode.Open);
+            return new FileStreamResult(stream, "application/octet-stream") { FileDownloadName = fileName };
         }
     }
 }
