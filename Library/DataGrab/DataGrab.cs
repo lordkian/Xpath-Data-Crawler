@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using XpathDataCrawler.DataStructure.Model;
 using XpathDataCrawler.DataStructure;
+using System.Diagnostics;
 
 namespace XpathDataCrawler.DataGrab
 {
@@ -92,13 +93,12 @@ namespace XpathDataCrawler.DataGrab
             foreach (var item in tree.GetAll())
             {
                 var mn = item.ModelNodes.Intersect(modelnodes).ToList();
-                if (mn.Count() == 0)
-                    continue;
-                foreach (var item2 in mn)
-                {
-                    int index = mn.IndexOf(item2);
-                    MethodProcessDownload(item2.URLGrabMethode, item.Datas[index], path);
-                }
+                if (mn.Count() > 0)
+                    foreach (var item2 in mn)
+                    {
+                        int index = mn.IndexOf(item2);
+                        MethodProcessDownload(item2.URLGrabMethode, item.Datas[index], path);
+                    }
             }
         }
         List<DataNode> list = new List<DataNode>();
@@ -300,13 +300,21 @@ namespace XpathDataCrawler.DataGrab
         }
         private static void DownloadData(string URL, string path)
         {
+            var p = new Process();
+            p.StartInfo.FileName = "aria2c.exe";
+            p.EnableRaisingEvents = true;
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            p.StartInfo.Arguments = "-d " + path + " " + URL;
+            p.Start();
+            p.WaitForExit();
+            /*
             if (URL == null || URL.Length == 0)
                 throw new Exception("URL Cannot be null or empty");
             var client = new WebClient();
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];
-            client.DownloadFile(URL, path + "\\" + filename);
+            client.DownloadFile(URL, path + "\\" + filename);*/
         }
         private static List<List<string>> LoadDataFromHTML(string HTML, params string[] xPathes)
         {
