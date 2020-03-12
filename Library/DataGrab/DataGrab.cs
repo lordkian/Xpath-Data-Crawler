@@ -9,6 +9,7 @@ using HtmlAgilityPack;
 using XpathDataCrawler.DataStructure.Model;
 using XpathDataCrawler.DataStructure;
 using System.Diagnostics;
+using System.IO;
 
 namespace XpathDataCrawler.DataGrab
 {
@@ -272,7 +273,7 @@ namespace XpathDataCrawler.DataGrab
             }
             return res;
         }
-        private static string LoadData(string URL, NameValueCollection data)
+        public static string LoadData(string URL, NameValueCollection data)
         {
             if (URL == null || URL.Length == 0)
                 throw new Exception("URL Cannot be null or empty");
@@ -281,7 +282,7 @@ namespace XpathDataCrawler.DataGrab
             var res = client.UploadValues(URL, "post", data);
             return Encoding.UTF8.GetString(res);
         }
-        private static string LoadData(string URL)
+        public static string LoadData(string URL)
         {
             if (URL == null || URL.Length == 0)
                 throw new Exception("URL Cannot be null or empty");
@@ -289,16 +290,22 @@ namespace XpathDataCrawler.DataGrab
             client.Encoding = Encoding.UTF8;
             return client.DownloadString(URL);
         }
-        private static void DownloadData(string URL, NameValueCollection data, string path)//not working
+        public static void DownloadData(string URL, NameValueCollection data, string path)
         {
             if (URL == null || URL.Length == 0)
                 throw new Exception("URL Cannot be null or empty");
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;
             var res = client.UploadValues(URL, "post", data);
-            // return Encoding.UTF8.GetString(res);
+            /* HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+             string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];*/
+            int i = 0;
+            while (File.Exists(path + "\\" + i))
+                i++;
+            File.WriteAllBytes(path + "\\" + i, res);
         }
-        private static void DownloadData(string URL, string path)
+        public static void DownloadData(string URL, string path)
         {
             var p = new Process();
             p.StartInfo.FileName = "aria2c.exe";
@@ -307,14 +314,6 @@ namespace XpathDataCrawler.DataGrab
             p.StartInfo.Arguments = "-d " + path + " " + URL;
             p.Start();
             p.WaitForExit();
-            /*
-            if (URL == null || URL.Length == 0)
-                throw new Exception("URL Cannot be null or empty");
-            var client = new WebClient();
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];
-            client.DownloadFile(URL, path + "\\" + filename);*/
         }
         private static List<List<string>> LoadDataFromHTML(string HTML, params string[] xPathes)
         {

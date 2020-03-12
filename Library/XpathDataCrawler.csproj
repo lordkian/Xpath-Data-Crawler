@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>LibraryXpath-Data-Crawler</AssemblyName>
+    <AssemblyName>XpathDataCrawler</AssemblyName>
     <Authors>Lordkian</Authors>
-    <PackageId>Xpath-Data-Crawler</PackageId>
-    <Product>Xpath-Data-Crawler</Product>
-    <AssemblyVersion>0.9.0.0</AssemblyVersion>
-    <Version>0.9.0</Version>
+    <PackageId>XpathDataCrawler</PackageId>
+    <Product>XpathDataCrawler</Product>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Version>1.0.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>GPL v3</Copyright>
