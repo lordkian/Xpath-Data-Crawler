@@ -297,10 +297,13 @@ namespace XpathDataCrawler.DataGrab
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;
             var res = client.UploadValues(URL, "post", data);
-             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+            /* HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
              HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-             string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];
-            File.WriteAllBytes(path + "\\f.html", res);
+             string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];*/
+            int i = 0;
+            while (File.Exists(path + "\\" + i))
+                i++;
+            File.WriteAllBytes(path + "\\" + i, res);
         }
         public static void DownloadData(string URL, string path)
         {

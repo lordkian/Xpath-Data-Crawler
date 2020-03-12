@@ -80,5 +80,13 @@ namespace test1
             di.ShowDialog();
             textBox2.Text = di.SelectedPath;
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var n = new System.Collections.Specialized.NameValueCollection();
+            n.Add("query", textBox1.Text);
+            DataGrab.DownloadData("https://subscene.com/subtitles/searchbytitle", n, textBox2.Text);
+
+        }
     }
 }
