@@ -297,7 +297,10 @@ namespace XpathDataCrawler.DataGrab
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;
             var res = client.UploadValues(URL, "post", data);
-            File.WriteAllBytes(path,res);
+             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+             string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];
+            File.WriteAllBytes(path + "\\f.html", res);
         }
         public static void DownloadData(string URL, string path)
         {
@@ -308,14 +311,6 @@ namespace XpathDataCrawler.DataGrab
             p.StartInfo.Arguments = "-d " + path + " " + URL;
             p.Start();
             p.WaitForExit();
-            /*
-            if (URL == null || URL.Length == 0)
-                throw new Exception("URL Cannot be null or empty");
-            var client = new WebClient();
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];
-            client.DownloadFile(URL, path + "\\" + filename);*/
         }
         private static List<List<string>> LoadDataFromHTML(string HTML, params string[] xPathes)
         {
