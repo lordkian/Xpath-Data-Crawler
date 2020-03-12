@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IO;
+using System.Net.Http;
 
 namespace PostFileDownload.Controllers
 {
@@ -10,12 +11,10 @@ namespace PostFileDownload.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult DownloadFile(string fileName)
+        public IActionResult DownloadFile(HttpRequestMessage request)
         {
-            if (fileName == null)
-                return DownloadFile();
             Stream stream = System.IO.File.Open($"wwwroot/test.zip", FileMode.Open);
-            return new FileStreamResult(stream, "application/octet-stream") ;
+            return new FileStreamResult(stream, "application/octet-stream") { FileDownloadName = "test.zip" };
         }
     }
 }
