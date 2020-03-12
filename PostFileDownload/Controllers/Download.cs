@@ -5,12 +5,17 @@ namespace PostFileDownload.Controllers
 {
     public class Download : Controller
     {
-
-        [HttpPost]
-        public IActionResult DownloadFile([FromBody] string fileName)
+        public IActionResult DownloadFile()
         {
-            Stream stream = System.IO.File.Open($"wwwroot/{fileName}", FileMode.Open);
-            return new FileStreamResult(stream, "application/octet-stream") { FileDownloadName = fileName };
+            return View();
+        }
+        [HttpPost]
+        public IActionResult DownloadFile(string fileName)
+        {
+            if (fileName == null)
+                return DownloadFile();
+            Stream stream = System.IO.File.Open($"wwwroot/test.zip", FileMode.Open);
+            return new FileStreamResult(stream, "application/octet-stream") ;
         }
     }
 }
