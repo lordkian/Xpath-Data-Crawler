@@ -17,10 +17,12 @@ namespace XpathDataCrawler.DataStructure
         /// <param name="father">Father of the data that needs to be added</param>
         public void Add(T data, T father)
         {
+            ///see if tree is empty
             if (Root == null)
                 Root = new TreeNode<T>(data);
             else
             {
+                ///search for the father
                 var list = new List<TreeNode<T>>() { Root };
                 while (list.Count > 0)
                 {
@@ -31,12 +33,14 @@ namespace XpathDataCrawler.DataStructure
                             return;
                         }
 
+                    /// svae the next row as current row
                     var next = new List<TreeNode<T>>();
                     foreach (var item in list)
                         next.AddRange(item.Next);
                     list.Clear();
                     list.AddRange(next);
                 }
+                ///if is exits from while then the father is not found
                 throw new ItemNotFoundException();
             }
         }
