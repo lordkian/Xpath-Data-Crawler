@@ -32,26 +32,34 @@ namespace XpathDataCrawler.DataGrab
         }
         public void Filter(Guid id, bool keep, params string[] datas)
         {
-            int index = filterIdsDic[id][0].ModelNodes.IndexOf(model.GuidToModelNode[id]);
-            foreach (var item in filterIdsDic[id])
+            var modelnode = model.GuidToModelNode[id];
+            var all = tree.GetAll().Where(d => d.ModelNodes.Contains(modelnode)).ToList();
+
+            int index = all[0].ModelNodes.IndexOf(modelnode);
+            foreach (var item in all)
             {
                 if (datas.Contains(item.Datas[index]) ^ keep)
                     RemoveDataNode(item);
             }
-            filterIdsDic.Remove(id);
             filterIds.Remove(id);
+            if (filterIdsDic.ContainsKey(id))
+                filterIdsDic.Remove(id);
             FilterOff();
         }
         public void Filter(string xpath, bool keep, params string[] datas)
         {
-            int index = filterXpathsDic[xpath][0].ModelNodes.IndexOf(model.XpathToModelNode[xpath]);
-            foreach (var item in filterXpathsDic[xpath])
+            var modelnode = model.XpathToModelNode[xpath];
+            var all = tree.GetAll().Where(d => d.ModelNodes.Contains(modelnode)).ToList();
+
+            int index = all[0].ModelNodes.IndexOf(modelnode);
+            foreach (var item in all)
             {
                 if (datas.Contains(item.Datas[index]) ^ keep)
                     RemoveDataNode(item);
             }
-            filterXpathsDic.Remove(xpath);
             filterXpaths.Remove(xpath);
+            if (filterXpathsDic.ContainsKey(xpath))
+                filterXpathsDic.Remove(xpath);
             FilterOff();
         }
         private void RemoveDataNode(DataNode dataNode)
