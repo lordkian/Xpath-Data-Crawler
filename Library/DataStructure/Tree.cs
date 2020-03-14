@@ -10,6 +10,11 @@ namespace XpathDataCrawler.DataStructure
         [DataMember]
         private TreeNode<T> Root;
         public T TreeRoot { get { return Root.Data; } }
+        /// <summary>
+        /// Adds a data to the tree
+        /// </summary>
+        /// <param name="data">The data that needs to be added</param>
+        /// <param name="father">Father of the data that needs to be added</param>
         public void Add(T data, T father)
         {
             if (Root == null)
