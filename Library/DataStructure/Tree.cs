@@ -111,10 +111,16 @@ namespace XpathDataCrawler.DataStructure
             /// just for compiler warning. it must not exit while at all
             return null;
         }
+        /// <summary>
+        /// get all of items
+        /// </summary>
+        /// <returns>all data in tree</returns>
         public List<T> GetAll()
         {
+            /// see if tree is empty
             if (Root == null)
                 return null;
+            /// itarate throgh all items
             var ret = new List<T>();
             var list = new List<TreeNode<T>>() { Root };
             while (list.Count > 0)
@@ -124,7 +130,7 @@ namespace XpathDataCrawler.DataStructure
                     next.AddRange(item.Next);
                 foreach (var item in list)
                     ret.Add(item.Data);
-
+                /// save the next row as current row
                 list.Clear();
                 list.AddRange(next);
             }
