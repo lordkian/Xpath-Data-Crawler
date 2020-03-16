@@ -78,7 +78,7 @@ namespace XpathDataCrawler.DataStructure
                 list.Clear();
                 list.AddRange(next);
             }
-            ///if is exits from while then the father is not found
+            ///if is exits from while then the data is not found
             throw new ItemNotFoundException();
         }
         /// <summary>
@@ -136,14 +136,21 @@ namespace XpathDataCrawler.DataStructure
             }
             return ret;
         }
+        /// <summary>
+        /// get the child of a data
+        /// </summary>
+        /// <param name="father">Father of the data that needs to be found</param>
+        /// <returns>child of input</returns>
         public List<T> GetChildren(T father)
         {
+            /// see if tree is empty
             if (Root == null)
                 throw new ItemNotFoundException();
-
+            /// itarate throgh all items
             var list = new List<TreeNode<T>>() { Root };
             while (list.Count > 0)
             {
+                ///search for the father 
                 foreach (var item in list)
                     if (item.Data.Equals(father))
                     {
@@ -152,39 +159,52 @@ namespace XpathDataCrawler.DataStructure
                             res.Add(item2.Data);
                         return res;
                     }
-
+                /// save the next row as current row
                 var next = new List<TreeNode<T>>();
                 foreach (var item in list)
                     next.AddRange(item.Next);
                 list.Clear();
                 list.AddRange(next);
             }
-
+            ///if is exits from while then the father is not found
             throw new ItemNotFoundException();
         }
+        /// <summary>
+        /// Clear the tree
+        /// </summary>
         public void Clear()
         {
             Root = null;
         }
+        /// <summary>
+        /// genarate a secondary tree with the same structure but with some of the data
+        /// </summary>
+        /// <param name="RootData">root of the new tree</param>
+        /// <returns>the new tree</returns>
         public Tree<T> GetSubTree(T RootData)
         {
+            /// see if tree is empty
             if (Root == null)
                 throw new EmptyTreeExeption();
             else
             {
+                ///while loop for all items
                 var list = new List<TreeNode<T>>() { Root };
                 while (list.Count > 0)
                 {
+                    ///search for the root of new tree 
                     foreach (var item in list)
                         if (item.Data.Equals(RootData))
                             return new Tree<T>() { Root = item.Copy() };
 
+                    /// save the next row as current row
                     var next = new List<TreeNode<T>>();
                     foreach (var item in list)
                         next.AddRange(item.Next);
                     list.Clear();
                     list.AddRange(next);
                 }
+                ///if is exits from while then the root of new tree is not found
                 throw new ItemNotFoundException();
             }
         }
