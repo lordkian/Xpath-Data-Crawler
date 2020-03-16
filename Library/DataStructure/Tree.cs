@@ -22,18 +22,18 @@ namespace XpathDataCrawler.DataStructure
                 Root = new TreeNode<T>(data);
             else
             {
-                ///search for the father
+                ///while loop for all items
                 var list = new List<TreeNode<T>>() { Root };
                 while (list.Count > 0)
                 {
+                    ///search for the father 
                     foreach (var item in list)
                         if (item.Data.Equals(father))
                         {
                             item.Next.Add(new TreeNode<T>(data));
                             return;
                         }
-
-                    /// svae the next row as current row
+                    /// save the next row as current row
                     var next = new List<TreeNode<T>>();
                     foreach (var item in list)
                         next.AddRange(item.Next);
@@ -44,13 +44,20 @@ namespace XpathDataCrawler.DataStructure
                 throw new ItemNotFoundException();
             }
         }
+        /// <summary>
+        /// Removes an element from tree
+        /// </summary>
+        /// <param name="data">The data that needs to be removed</param>
         public void Remove(T data)
         {
+            /// see if tree is empty
             if (Root == null)
                 throw new ItemNotFoundException();
+            ///while loop for all items
             var list = new List<TreeNode<T>>() { Root };
             while (list.Count > 0)
             {
+                ///search for the father 
                 TreeNode<T> father = null, son = null;
                 foreach (var item in list)
                     foreach (var item2 in item.Next)
@@ -64,12 +71,14 @@ namespace XpathDataCrawler.DataStructure
                     father.Next.Remove(son);
                     return;
                 }
+                /// save the next row as current row
                 var next = new List<TreeNode<T>>();
                 foreach (var item in list)
                     next.AddRange(item.Next);
                 list.Clear();
                 list.AddRange(next);
             }
+            ///if is exits from while then the father is not found
             throw new ItemNotFoundException();
         }
         public List<T> GetLastLine()
