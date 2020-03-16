@@ -81,11 +81,16 @@ namespace XpathDataCrawler.DataStructure
             ///if is exits from while then the father is not found
             throw new ItemNotFoundException();
         }
+        /// <summary>
+        /// Get the last line of the tree. attention! it's not all item that doesn't have child.
+        /// </summary>
+        /// <returns>the last line of the tree</returns>
         public List<T> GetLastLine()
         {
+            /// see if tree is empty
             if (Root == null)
                 return null;
-
+            /// itarate throgh all items
             var list = new List<TreeNode<T>>() { Root };
             while (list.Count > 0)
             {
@@ -99,9 +104,11 @@ namespace XpathDataCrawler.DataStructure
                         ret.Add(item.Data);
                     return ret;
                 }
+                /// save the next row as current row
                 list.Clear();
                 list.AddRange(next);
             }
+            /// just for compiler warning. it must not exit while at all
             return null;
         }
         public List<T> GetAll()
