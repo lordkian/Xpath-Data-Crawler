@@ -18,6 +18,10 @@ namespace XpathDataCrawler.DataStructure
         {
             return Data.ToString();
         }
+        /// <summary>
+        /// Generate a copy of this instance TreeNode of and return it.
+        /// </summary>
+        /// <returns>a copy of this instance TreeNode </returns>
         public TreeNode<T> Copy()
         {
             var t = new TreeNode<T>(Data);

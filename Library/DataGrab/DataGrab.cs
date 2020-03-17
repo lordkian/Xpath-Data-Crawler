@@ -23,6 +23,7 @@ namespace XpathDataCrawler.DataGrab
         Dictionary<string, List<DataNode>> filterXpathsDic = new Dictionary<string, List<DataNode>>();
         Dictionary<Guid, List<DataNode>> filterIdsDic = new Dictionary<Guid, List<DataNode>>();
         bool FilterOn = false;
+        public static string PathToAria2c { get; set; }
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
         public DataGrab(Model model, string keyword)
@@ -315,13 +316,21 @@ namespace XpathDataCrawler.DataGrab
         }
         public static void DownloadData(string URL, string path)
         {
-            var p = new Process();
-            p.StartInfo.FileName = "aria2c.exe";
-            p.EnableRaisingEvents = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            p.StartInfo.Arguments = "-d " + path + " " + URL;
-            p.Start();
-            p.WaitForExit();
+            if (PathToAria2c.Count() > 0)
+            {
+                var p = new Process();
+                p.StartInfo.FileName = PathToAria2c;
+                p.EnableRaisingEvents = true;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                p.StartInfo.Arguments = "-d " + path + " " + URL;
+                p.Start();
+                p.WaitForExit();
+            }
+            else
+            {
+                WebClient webClient = new WebClient();
+                webClient.DownloadFile(URL, path);
+            }
         }
         private static List<List<string>> LoadDataFromHTML(string HTML, params string[] xPathes)
         {
