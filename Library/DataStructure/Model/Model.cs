@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 
 namespace XpathDataCrawler.DataStructure.Model
 {
     public enum LeafType { Downloadable, Data, FinalData }
-    public enum SaveType { XML, JSON, Binary };
+    public enum SaveType { XML, JSON, Binary, CleanJSON };
     [DataContract]
     public class Model
     {
@@ -74,6 +77,55 @@ namespace XpathDataCrawler.DataStructure.Model
             XpathToModelNode.Add(xpath, l);
             GuidToModelNode.Add(guid, l);
             return guid;
+        }
+        public static void Save(string fileName, Model model, SaveType saveType)
+        {
+            var sw = new StreamWriter(fileName);
+            sw.WriteLine(saveType.ToString());
+            switch (saveType)
+            {
+                case SaveType.XML:
+                    break;
+                case SaveType.JSON:
+                    break;
+                case SaveType.Binary:
+                    break;
+                case SaveType.CleanJSON:
+                    sw.Write(JsonConvert.SerializeObject(model, Formatting.Indented));
+                    break;
+                default:
+                    break;
+            }
+            sw.Close();
+        }
+        public static Model Load(string fileName)
+        {
+            var sr = new StreamReader(fileName);
+            SaveType saveType;
+            var type = Enum.TryParse<SaveType>(sr.ReadLine(), out saveType);
+            var str = sr.ReadToEnd();
+            sr.Close();
+            Model model = null;
+            switch (saveType)
+            {
+                case SaveType.XML:
+                    break;
+                case SaveType.JSON:
+                    break;
+                case SaveType.Binary:
+                    break;
+                case SaveType.CleanJSON:
+                    model = JsonConvert.DeserializeObject<Model>(str);
+                    break;
+                default:
+                    break;
+            }
+            foreach (ModelNode item in model.Tree.GetAll())
+            {
+                model.XpathToModelNode.Add(item.Xpath, item);
+                model.GuidToModelNode.Add(item.Id, item);
+            }
+            return model;
         }
     }
 }
