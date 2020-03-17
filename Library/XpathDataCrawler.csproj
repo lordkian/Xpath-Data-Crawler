@@ -6,8 +6,8 @@
     <Authors>Lordkian</Authors>
     <PackageId>XpathDataCrawler</PackageId>
     <Product>XpathDataCrawler</Product>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.0.0</Version>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <Version>1.1.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>GPL v3</Copyright>
