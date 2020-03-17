@@ -319,9 +319,9 @@ namespace XpathDataCrawler.DataGrab
              HttpWebResponse response = (HttpWebResponse)request.GetResponse();
              string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];*/
             int i = 0;
-            while (File.Exists(path + "\\" + i))
+            while (File.Exists(path + Slash + i))
                 i++;
-            File.WriteAllBytes(path + "\\" + i, res);
+            File.WriteAllBytes(path + Slash + i, res);
         }
         public static void DownloadData(string URL, string path)
         {
