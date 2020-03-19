@@ -18,6 +18,7 @@ namespace XpathDataCrawler.DataGrab
         readonly Model model;
         readonly Tree<DataNode> tree = new Tree<DataNode>();
         readonly string keyword;
+        public static readonly string Slash;
         List<string> filterXpaths = new List<string>();
         List<Guid> filterIds = new List<Guid>();
         Dictionary<string, List<DataNode>> filterXpathsDic = new Dictionary<string, List<DataNode>>();
@@ -26,6 +27,14 @@ namespace XpathDataCrawler.DataGrab
         public static string PathToAria2c { get; set; }
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
+        static DataGrab()
+        {
+            var os = Environment.OSVersion;
+            if (os.Platform == PlatformID.Win32NT)
+                Slash = "\\";
+            else
+                Slash = "/";
+        }
         public DataGrab(Model model, string keyword)
         {
             this.model = model;
@@ -310,9 +319,9 @@ namespace XpathDataCrawler.DataGrab
              HttpWebResponse response = (HttpWebResponse)request.GetResponse();
              string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];*/
             int i = 0;
-            while (File.Exists(path + "\\" + i))
+            while (File.Exists(path + Slash + i))
                 i++;
-            File.WriteAllBytes(path + "\\" + i, res);
+            File.WriteAllBytes(path + Slash + i, res);
         }
         public static void DownloadData(string URL, string path)
         {
@@ -328,8 +337,11 @@ namespace XpathDataCrawler.DataGrab
             }
             else
             {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];
                 WebClient webClient = new WebClient();
-                webClient.DownloadFile(URL, path);
+                webClient.DownloadFile(URL, path + Slash + filename);
             }
         }
         private static List<List<string>> LoadDataFromHTML(string HTML, params string[] xPathes)
