@@ -33,30 +33,6 @@ namespace XpathDataCrawler
         private int downloadingTask = 0;
         private int downloadTaskIndex = 0;
 
-        /*
-        private void RecursiveFunction()
-        {
-            if (downloadTaskIndex < DownloadItems.Count)
-            {
-                if (downloadingTask < DownloadsInProgress)
-                {
-                    Task t = new Task(new Action(() =>
-                    {
-                        Uri uri = DownloadItems[downloadTaskIndex].Uri;
-                        string fileName = downloadTaskIndex.ToString();
-
-                        Download(uri,fileName);
-                        downloadTaskIndex++;
-                        downloadingTask++;
-
-                    })).ContinueWith(new Action<Task>((Task completedTask) =>
-                    {
-                        downloadingTask--;
-                    }));
-                }
-                RecursiveFunction();
-            }
-        }*/
 
         private void RecursiveFunction()
         {
