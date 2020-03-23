@@ -27,22 +27,66 @@ namespace XpathDataCrawler
 
         public void Start()
         {
-            foreach (DownloadData item in DownloadItems)
-            {
-
-            }
+            RecursiveFunction();
         }
 
-        public void RecursiveFunction()
+        private int downloadingTask = 0;
+        private int downloadTaskIndex = 0;
+
+        /*
+        private void RecursiveFunction()
         {
-            for (int i = 0; i < DownloadsInProgress; i++)
+            if (downloadTaskIndex < DownloadItems.Count)
             {
-                Uri googleUri = new Uri("https://www.google.com/");
-                Task t = new Task(new Action(() => { Download(googleUri, i.ToString()); }));
+                if (downloadingTask < DownloadsInProgress)
+                {
+                    Task t = new Task(new Action(() =>
+                    {
+                        Uri uri = DownloadItems[downloadTaskIndex].Uri;
+                        string fileName = downloadTaskIndex.ToString();
+
+                        Download(uri,fileName);
+                        downloadTaskIndex++;
+                        downloadingTask++;
+
+                    })).ContinueWith(new Action<Task>((Task completedTask) =>
+                    {
+                        downloadingTask--;
+                    }));
+                }
+                RecursiveFunction();
+            }
+        }*/
+
+        private void RecursiveFunction()
+        {
+            if (downloadTaskIndex < DownloadItems.Count)
+            {
+                if (downloadingTask < DownloadsInProgress)
+                {
+                    int current_downloadTaskIndex = downloadTaskIndex;
+                    int current_downloadingTask = downloadingTask;
+
+                    Task.Run(new Func<int>(() =>
+                    {
+                        Uri toDownload = DownloadItems[current_downloadTaskIndex].Uri;
+                        string fileName = current_downloadTaskIndex.ToString();
+
+                        Download(toDownload, fileName);
+
+                        downloadTaskIndex++;
+                        downloadingTask++;
+                        return current_downloadTaskIndex;
+                    })).ContinueWith(new Action<Task>((Task completedTask) =>
+                    {
+                        downloadingTask--;
+                    }));
+                }
+                RecursiveFunction();
             }
         }
 
-        public void Download(Uri uri, string fileName)
+        private void Download(Uri uri, string fileName)
         {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
             HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
