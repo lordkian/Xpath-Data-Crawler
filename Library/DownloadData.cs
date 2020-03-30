@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace XpathDataCrawler
 {
-    public class DownloadData
+    internal class DownloadData
     {
         public Uri Uri { get; set; }
         public string Path { get; set; }

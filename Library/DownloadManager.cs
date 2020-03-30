@@ -1,66 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace XpathDataCrawler
 {
     public class DownloadManager
     {
-        public enum DownloadStatus
+        private List<DownloadData> downloadItems = new List<DownloadData>();
+        private Task task;
+        private ManualResetEvent manualResetEvent = new ManualResetEvent(false);
+        private object downloadItemsLock = new object();
+        private bool downloading = false;
+        public DownloadManager()
         {
-            Ready, InProgress, Done
+            task = Task.Run(DoWork);
         }
-
-        private List<DownloadData> DownloadItems = new List<DownloadData>();
-
-        public void Add_DownloadItem(DownloadData downloadData)
+        public void AddDownloadItem(string path, string url, NameValueCollection postData = null, CookieCollection postCookies = null)
         {
-            DownloadItems.Add(downloadData);
+            lock (downloadItemsLock)
+            {
+                downloadItems.Add(new DownloadData() { Path = path, Uri = new Uri(url), PostData = postData, PostCookies = postCookies });
+            }
+            if (downloading && !manualResetEvent.WaitOne(0))
+                manualResetEvent.Set();
         }
 
         public int DownloadsInProgress { get; set; }
 
-        public DownloadStatus Status { get; set; }
-
         public void Start()
         {
-            RecursiveFunction();
+            manualResetEvent.Set();
+            downloading = true;
         }
-
-        private int downloadingTask = 0;
-        private int downloadTaskIndex = 0;
-
-
-        private void RecursiveFunction()
+        public void stop()
         {
-            if (downloadTaskIndex < DownloadItems.Count)
+            manualResetEvent.Reset();
+            downloading = false;
+        }
+        private void DoWork()
+        {
+            int c;
+            while (true)
             {
-                if (downloadingTask < DownloadsInProgress)
+                manualResetEvent.WaitOne();
+                lock (downloadItemsLock)
                 {
-                    int current_downloadTaskIndex = downloadTaskIndex;
-                    int current_downloadingTask = downloadingTask;
-
-                    Task.Run(new Func<int>(() =>
-                    {
-                        Uri toDownload = DownloadItems[current_downloadTaskIndex].Uri;
-                        string fileName = current_downloadTaskIndex.ToString();
-
-                        Download(toDownload, fileName);
-
-                        downloadTaskIndex++;
-                        downloadingTask++;
-                        return current_downloadTaskIndex;
-                    })).ContinueWith(new Action<Task>((Task completedTask) =>
-                    {
-                        downloadingTask--;
-                    }));
+                    c = downloadItems.Count;
                 }
-
-                FindPrimeNumber(30000);
-                RecursiveFunction();
+                if (c == 0)
+                    stop();
+                else
+                {
+                    DownloadData downloadData;
+                    lock (downloadItemsLock)
+                    {
+                        downloadData = downloadItems[0];
+                        downloadItems.Remove(downloadData);
+                    }
+                    Task.Run(() => { Download(downloadData.Uri, downloadData.Path); });
+                }
             }
         }
 
@@ -77,33 +80,5 @@ namespace XpathDataCrawler
             responseStream.Close();
             httpWebResponse.Close();
         }
-
-        // Time Consuming Method.
-        public static long FindPrimeNumber(int n)
-        {
-            int count = 0;
-            long a = 2;
-            while (count < n)
-            {
-                long b = 2;
-                int prime = 1;// to check if found a prime
-                while (b * b <= a)
-                {
-                    if (a % b == 0)
-                    {
-                        prime = 0;
-                        break;
-                    }
-                    b++;
-                }
-                if (prime > 0)
-                {
-                    count++;
-                }
-                a++;
-            }
-            return (--a);
-        }
-
     }
 }
