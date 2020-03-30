@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +25,7 @@ namespace XpathDataCrawler
             {
                 downloadItems.Add(new DownloadData() { Path = path, Uri = new Uri(url), PostData = postData, PostCookies = postCookies });
             }
-            if (downloading && !manualResetEvent.WaitOne(0))
+            if (downloading)
                 manualResetEvent.Set();
         }
 
