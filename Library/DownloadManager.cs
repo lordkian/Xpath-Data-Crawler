@@ -77,7 +77,7 @@ namespace XpathDataCrawler
         }
 
         private void Download(DownloadData downloadData)
-        {
+        {//https://stackoverflow.com/questions/4015324/how-to-make-http-post-web-request
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(downloadData.Uri);
             HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
             string filename = new ContentDisposition(httpWebResponse.Headers["content-disposition"]).FileName;
