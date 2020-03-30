@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
+using System.Net.Mime;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +17,14 @@ namespace XpathDataCrawler
         private ManualResetEvent manualResetEvent = new ManualResetEvent(false);
         private object downloadItemsLock = new object();
         private bool downloading = false;
+        public static readonly string DirSprator;
+        static DownloadManager()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                DirSprator = "\\";
+            else
+                DirSprator = "/";
+        }
         public DownloadManager()
         {
             task = Task.Run(DoWork);
@@ -61,17 +71,18 @@ namespace XpathDataCrawler
                         downloadData = downloadItems[0];
                         downloadItems.Remove(downloadData);
                     }
-                    Task.Run(() => { Download(downloadData.Uri, downloadData.Path); });
+                    Task.Run(() => { Download(downloadData); });
                 }
             }
         }
 
-        private void Download(Uri uri, string fileName)
+        private void Download(DownloadData downloadData)
         {
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(downloadData.Uri);
             HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            string filename = new ContentDisposition(httpWebResponse.Headers["content-disposition"]).FileName;
 
-            Stream fileStream = File.Open(fileName, FileMode.Create);
+            Stream fileStream = File.Open(downloadData.Path + DirSprator + filename, FileMode.Create);
             Stream responseStream = httpWebResponse.GetResponseStream();
             responseStream.CopyTo(fileStream);
 
