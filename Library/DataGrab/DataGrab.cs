@@ -24,7 +24,7 @@ namespace XpathDataCrawler.DataGrab
         Dictionary<string, List<DataNode>> filterXpathsDic = new Dictionary<string, List<DataNode>>();
         Dictionary<Guid, List<DataNode>> filterIdsDic = new Dictionary<Guid, List<DataNode>>();
         bool FilterOn = false;
-        public static string PathToAria2c { get; set; }
+        DownloadManager downloadManager = new DownloadManager();
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
         static DataGrab()
@@ -108,6 +108,7 @@ namespace XpathDataCrawler.DataGrab
         }
         public void Download(string path)
         {
+            downloadManager.Start();
             var modelnodes = model.GetDownloadableNodes();
             foreach (var item in tree.GetAll())
             {
@@ -253,20 +254,20 @@ namespace XpathDataCrawler.DataGrab
         {
             if (method == null)
             {
-                DownloadData(model.BaseURL + "/" + xpathResult, path);
+                downloadManager.AddDownloadItem(path, model.BaseURL + "/" + xpathResult);
                 return;
             }
             var url = BuildString(method.URL, xpathResult);
             var c = method.Keys.Count;
             if (c == 0)
             {
-                DownloadData(url, path);
+                downloadManager.AddDownloadItem(path, url);
                 return;
             }
             var nvc = new NameValueCollection();
             for (int i = 0; i < c; i++)
                 nvc.Add(BuildString(method.Keys[i], xpathResult), BuildString(method.Values[i], xpathResult));
-            DownloadData(url, nvc, path);
+            downloadManager.AddDownloadItem(path, url, nvc);
         }
         private string BuildString(List<string> list, string xpathResult)
         {
@@ -307,42 +308,6 @@ namespace XpathDataCrawler.DataGrab
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;
             return client.DownloadString(URL);
-        }
-        public static void DownloadData(string URL, NameValueCollection data, string path)
-        {
-            if (URL == null || URL.Length == 0)
-                throw new Exception("URL Cannot be null or empty");
-            var client = new WebClient();
-            client.Encoding = Encoding.UTF8;
-            var res = client.UploadValues(URL, "post", data);
-            /* HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-             string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];*/
-            int i = 0;
-            while (File.Exists(path + Slash + i))
-                i++;
-            File.WriteAllBytes(path + Slash + i, res);
-        }
-        public static void DownloadData(string URL, string path)
-        {
-            if (PathToAria2c.Count() > 0)
-            {
-                var p = new Process();
-                p.StartInfo.FileName = PathToAria2c;
-                p.EnableRaisingEvents = true;
-                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                p.StartInfo.Arguments = "-d " + path + " " + URL;
-                p.Start();
-                p.WaitForExit();
-            }
-            else
-            {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                string filename = response.Headers["Content-Disposition"].Split(new string[] { "=" }, StringSplitOptions.None)[1];
-                WebClient webClient = new WebClient();
-                webClient.DownloadFile(URL, path + Slash + filename);
-            }
         }
         private static List<List<string>> LoadDataFromHTML(string HTML, params string[] xPathes)
         {
