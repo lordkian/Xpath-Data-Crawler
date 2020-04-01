@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace XpathDataCrawler
 {
@@ -76,14 +79,33 @@ namespace XpathDataCrawler
             }
         }
 
+
+        private string ToQueryString(this NameValueCollection collection)
+        {
+            var array = (from key in collection.AllKeys
+                         from value in collection.GetValues(key)
+                         select string.Format("{0}={1}", HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(value))).ToArray();
+            return string.Join("&", array);
+        }
+
         private void Download(DownloadData downloadData)
-        {//https://stackoverflow.com/questions/4015324/how-to-make-http-post-web-request
+        {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(downloadData.Uri);
             HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
             string filename = new ContentDisposition(httpWebResponse.Headers["content-disposition"]).FileName;
+            Stream responseStream = httpWebResponse.GetResponseStream();
+
+            if (downloadData.PostData != null)
+            {
+                byte[] postData = Encoding.ASCII.GetBytes(ToQueryString(downloadData.PostData));
+                httpWebRequest.Method = "POST";
+                httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+                httpWebRequest.ContentLength = postData.Length;
+                responseStream.Write(postData, 0, postData.Length);
+            }
 
             Stream fileStream = File.Open(downloadData.Path + DirSprator + filename, FileMode.Create);
-            Stream responseStream = httpWebResponse.GetResponseStream();
+            responseStream.CopyTo(fileStream);
             responseStream.CopyTo(fileStream);
 
             fileStream.Close();
