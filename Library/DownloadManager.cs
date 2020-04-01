@@ -80,7 +80,7 @@ namespace XpathDataCrawler
         }
 
 
-        private string ToQueryString(this NameValueCollection collection)
+        private string ToQueryString(NameValueCollection collection)
         {
             var array = (from key in collection.AllKeys
                          from value in collection.GetValues(key)
