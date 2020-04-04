@@ -18,7 +18,6 @@ namespace XpathDataCrawler.DataGrab
         readonly Model model;
         readonly Tree<DataNode> tree = new Tree<DataNode>();
         readonly string keyword;
-        public static readonly string Slash;
         List<string> filterXpaths = new List<string>();
         List<Guid> filterIds = new List<Guid>();
         Dictionary<string, List<DataNode>> filterXpathsDic = new Dictionary<string, List<DataNode>>();
@@ -27,14 +26,7 @@ namespace XpathDataCrawler.DataGrab
         DownloadManager downloadManager = new DownloadManager();
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
-        static DataGrab()
-        {
-            var os = Environment.OSVersion;
-            if (os.Platform == PlatformID.Win32NT)
-                Slash = "\\";
-            else
-                Slash = "/";
-        }
+
         public DataGrab(Model model, string keyword)
         {
             this.model = model;
@@ -108,7 +100,7 @@ namespace XpathDataCrawler.DataGrab
         }
         public void Download(string path)
         {
-            downloadManager.Start();
+
             var modelnodes = model.GetDownloadableNodes();
             foreach (var item in tree.GetAll())
             {
@@ -120,6 +112,7 @@ namespace XpathDataCrawler.DataGrab
                         MethodProcessDownload(item2.URLGrabMethode, item.Datas[index], path);
                     }
             }
+            downloadManager.Start();
         }
         List<DataNode> list = new List<DataNode>();
         List<DataNode> list2 = new List<DataNode>();

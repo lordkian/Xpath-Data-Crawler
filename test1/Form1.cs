@@ -40,7 +40,6 @@ namespace test1
             model.AddItem(guid2, "//div [@class='download']/a/@href", "subtitle.zip", LeafType.Downloadable, true);
 
             dataGrab = new DataGrab(model, textBox1.Text);
-            DataGrab.PathToAria2c = "aria2c.exe";
             dataGrab.SetFilter(f1Guid, f2Guid);
             dataGrab.onFilter = OnFilter;
             dataGrab.onFinish = Finish;
