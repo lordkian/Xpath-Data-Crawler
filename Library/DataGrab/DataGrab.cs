@@ -10,6 +10,7 @@ using XpathDataCrawler.DataStructure.Model;
 using XpathDataCrawler.DataStructure;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace XpathDataCrawler.DataGrab
 {
@@ -18,7 +19,6 @@ namespace XpathDataCrawler.DataGrab
         readonly Model model;
         readonly Tree<DataNode> tree = new Tree<DataNode>();
         readonly string keyword;
-        public static readonly string Slash;
         List<string> filterXpaths = new List<string>();
         List<Guid> filterIds = new List<Guid>();
         Dictionary<string, List<DataNode>> filterXpathsDic = new Dictionary<string, List<DataNode>>();
@@ -27,14 +27,7 @@ namespace XpathDataCrawler.DataGrab
         DownloadManager downloadManager = new DownloadManager();
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
-        static DataGrab()
-        {
-            var os = Environment.OSVersion;
-            if (os.Platform == PlatformID.Win32NT)
-                Slash = "\\";
-            else
-                Slash = "/";
-        }
+
         public DataGrab(Model model, string keyword)
         {
             this.model = model;
@@ -108,7 +101,7 @@ namespace XpathDataCrawler.DataGrab
         }
         public void Download(string path)
         {
-            downloadManager.Start();
+            var tasks = new List<Task>();
             var modelnodes = model.GetDownloadableNodes();
             foreach (var item in tree.GetAll())
             {
@@ -117,9 +110,11 @@ namespace XpathDataCrawler.DataGrab
                     foreach (var item2 in mn)
                     {
                         int index = mn.IndexOf(item2);
-                        MethodProcessDownload(item2.URLGrabMethode, item.Datas[index], path);
+                        tasks.Add(Task.Run(() => { MethodProcessDownload(item2.URLGrabMethode, item.Datas[index], path); }));
                     }
             }
+            tasks.ForEach((t) => { t.Wait(); });
+            downloadManager.Start();
         }
         List<DataNode> list = new List<DataNode>();
         List<DataNode> list2 = new List<DataNode>();
@@ -158,8 +153,18 @@ namespace XpathDataCrawler.DataGrab
                     StratFilterAction();
                     return;
                 }
+                var tasks = new List<Task>();
                 foreach (var item in list)
-                    list2.AddRange(GrabData(item));
+                    tasks.Add(Task.Run(() =>
+                    {
+                        var res = GrabData(item);
+                        lock (list2)
+                        {
+                            list2.AddRange(res);
+                        }
+                    }));
+                tasks.ForEach((t) => { t.Wait(); });
+
                 list.Clear();
                 list.AddRange(list2);
                 list2.Clear();

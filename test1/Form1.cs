@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Windows.Forms;
 using XpathDataCrawler.DataGrab;
 using XpathDataCrawler.DataStructure.Model;
@@ -15,6 +16,7 @@ namespace test1
         public Form1()
         {
             InitializeComponent();
+            ServicePointManager.DefaultConnectionLimit = 16;
         }
         private void Button1_Click(object sender, EventArgs e)
         {
@@ -40,7 +42,6 @@ namespace test1
             model.AddItem(guid2, "//div [@class='download']/a/@href", "subtitle.zip", LeafType.Downloadable, true);
 
             dataGrab = new DataGrab(model, textBox1.Text);
-            DataGrab.PathToAria2c = "aria2c.exe";
             dataGrab.SetFilter(f1Guid, f2Guid);
             dataGrab.onFilter = OnFilter;
             dataGrab.onFinish = Finish;
