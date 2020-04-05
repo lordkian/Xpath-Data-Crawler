@@ -24,6 +24,7 @@ namespace XpathDataCrawler.DataGrab
         Dictionary<string, List<DataNode>> filterXpathsDic = new Dictionary<string, List<DataNode>>();
         Dictionary<Guid, List<DataNode>> filterIdsDic = new Dictionary<Guid, List<DataNode>>();
         bool FilterOn = false;
+        bool started = false;
         DownloadManager downloadManager = new DownloadManager();
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
@@ -120,6 +121,9 @@ namespace XpathDataCrawler.DataGrab
         List<DataNode> list2 = new List<DataNode>();
         public void Start()
         {
+            if (started)
+                return;
+            started = true;
             var root = RootGrabData();
             list.Add(root);
             Continue();
