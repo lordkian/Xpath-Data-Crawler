@@ -6,12 +6,12 @@
     <Authors>Lordkian</Authors>
     <PackageId>XpathDataCrawler</PackageId>
     <Product>XpathDataCrawler</Product>
-    <AssemblyVersion>1.1.2.0</AssemblyVersion>
-    <Version>1.1.2</Version>
+    <AssemblyVersion>1.3.0.0</AssemblyVersion>
+    <Version>1.3.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>GPL v3</Copyright>
-    <FileVersion>1.1.2.0</FileVersion>
+    <FileVersion>1.3.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
