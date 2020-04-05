@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Windows.Forms;
 using XpathDataCrawler.DataGrab;
 using XpathDataCrawler.DataStructure.Model;
@@ -15,6 +16,7 @@ namespace test1
         public Form1()
         {
             InitializeComponent();
+            ServicePointManager.DefaultConnectionLimit = 16;
         }
         private void Button1_Click(object sender, EventArgs e)
         {

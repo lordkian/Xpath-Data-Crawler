@@ -10,6 +10,7 @@ using XpathDataCrawler.DataStructure.Model;
 using XpathDataCrawler.DataStructure;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace XpathDataCrawler.DataGrab
 {
@@ -100,7 +101,7 @@ namespace XpathDataCrawler.DataGrab
         }
         public void Download(string path)
         {
-
+            var tasks = new List<Task>();
             var modelnodes = model.GetDownloadableNodes();
             foreach (var item in tree.GetAll())
             {
@@ -109,9 +110,10 @@ namespace XpathDataCrawler.DataGrab
                     foreach (var item2 in mn)
                     {
                         int index = mn.IndexOf(item2);
-                        MethodProcessDownload(item2.URLGrabMethode, item.Datas[index], path);
+                        tasks.Add(Task.Run(() => { MethodProcessDownload(item2.URLGrabMethode, item.Datas[index], path); }));
                     }
             }
+            tasks.ForEach((t) => { t.Wait(); });
             downloadManager.Start();
         }
         List<DataNode> list = new List<DataNode>();
@@ -151,8 +153,18 @@ namespace XpathDataCrawler.DataGrab
                     StratFilterAction();
                     return;
                 }
+                var tasks = new List<Task>();
                 foreach (var item in list)
-                    list2.AddRange(GrabData(item));
+                    tasks.Add(Task.Run(() =>
+                    {
+                        var res = GrabData(item);
+                        lock (list2)
+                        {
+                            list2.AddRange(res);
+                        }
+                    }));
+                tasks.ForEach((t) => { t.Wait(); });
+
                 list.Clear();
                 list.AddRange(list2);
                 list2.Clear();
