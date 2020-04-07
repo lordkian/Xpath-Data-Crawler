@@ -28,11 +28,14 @@ namespace XpathDataCrawler.DataGrab
         DownloadManager downloadManager = new DownloadManager();
         public Action<Guid, string, string[]> onFilter { get; set; }
         public Action<DataGrab> onFinish { get; set; }
-
         public DataGrab(Model model, string keyword)
         {
             this.model = model;
             this.keyword = keyword;
+        }
+        public async void FilterAsync(Guid id, bool keep, params string[] datas)
+        {
+            await Task.Run(() => { Filter(id, keep, datas); });
         }
         public void Filter(Guid id, bool keep, params string[] datas)
         {
@@ -49,6 +52,10 @@ namespace XpathDataCrawler.DataGrab
             if (filterIdsDic.ContainsKey(id))
                 filterIdsDic.Remove(id);
             FilterOff();
+        }
+        public async void FilterAsync(string xpath, bool keep, params string[] datas)
+        {
+            await Task.Run(() => { Filter(xpath, keep, datas); });
         }
         public void Filter(string xpath, bool keep, params string[] datas)
         {
@@ -117,8 +124,16 @@ namespace XpathDataCrawler.DataGrab
             tasks.ForEach((t) => { t.Wait(); });
             downloadManager.Start();
         }
+        public async void DownloadAsync(string path)
+        {
+            await Task.Run(() => { Download(path); });
+        }
         List<DataNode> list = new List<DataNode>();
         List<DataNode> list2 = new List<DataNode>();
+        public async void StartAsync()
+        {
+            await Task.Run(() => { Start(); });
+        }
         public void Start()
         {
             if (started)
@@ -127,6 +142,10 @@ namespace XpathDataCrawler.DataGrab
             var root = RootGrabData();
             list.Add(root);
             Continue();
+        }
+        public async void ContinueAsync()
+        {
+            await Task.Run(() => { Continue(); });
         }
         public void Continue()
         {
