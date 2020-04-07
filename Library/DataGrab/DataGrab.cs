@@ -123,6 +123,7 @@ namespace XpathDataCrawler.DataGrab
             }
             tasks.ForEach((t) => { t.Wait(); });
             downloadManager.Start();
+            downloadManager.WaitForJobs();
         }
         public async void DownloadAsync(string path)
         {
