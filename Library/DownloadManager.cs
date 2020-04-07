@@ -16,6 +16,7 @@ namespace XpathDataCrawler
     public class DownloadManager
     {
         private List<DownloadData> downloadItems = new List<DownloadData>();
+        private List<Task> tasks = new List<Task>();
         private Task task;
         private ManualResetEvent manualResetEvent = new ManualResetEvent(false);
         private object downloadItemsLock = new object();
@@ -41,9 +42,6 @@ namespace XpathDataCrawler
             if (downloading)
                 manualResetEvent.Set();
         }
-
-        public int DownloadsInProgress { get; set; }
-
         public void Start()
         {
             manualResetEvent.Set();
@@ -53,6 +51,17 @@ namespace XpathDataCrawler
         {
             manualResetEvent.Reset();
             downloading = false;
+        }
+        public void WaitForJobs()
+        {
+            tasks.ForEach((t) => { t.Wait(); });
+            lock (tasks)
+            {
+                var finished = from t in tasks where t.Status == TaskStatus.RanToCompletion select t;
+                foreach (var item in finished)
+                    tasks.Remove(item);
+            }
+            tasks.ForEach((t) => { t.Wait(); });
         }
         private void DoWork()
         {
@@ -74,12 +83,13 @@ namespace XpathDataCrawler
                         downloadData = downloadItems[0];
                         downloadItems.Remove(downloadData);
                     }
-                    Task.Run(() => { Download(downloadData); });
+                    lock (tasks)
+                    {
+                        tasks.Add(Task.Run(() => { Download(downloadData); }));
+                    }
                 }
             }
         }
-
-
         private string ToQueryString(NameValueCollection collection)
         {
             var array = (from key in collection.AllKeys
@@ -87,7 +97,6 @@ namespace XpathDataCrawler
                          select string.Format("{0}={1}", HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(value))).ToArray();
             return string.Join("&", array);
         }
-
         private void Download(DownloadData downloadData)
         {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(downloadData.Uri);
