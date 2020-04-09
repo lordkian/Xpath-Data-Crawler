@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace XpathDataCrawler.DataStructure.Model
 {
     [DataContract]
-    internal abstract class ModelNode
+    internal class ModelNode
     {
         [DataMember]
         internal bool IsURLRelative { get; set; }
