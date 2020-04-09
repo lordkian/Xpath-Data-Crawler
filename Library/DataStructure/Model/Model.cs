@@ -78,48 +78,17 @@ namespace XpathDataCrawler.DataStructure.Model
             GuidToModelNode.Add(guid, l);
             return guid;
         }
-        public static void Save(string fileName, Model model, SaveType saveType)
+        public static void Save(string fileName, Model model)
         {
             var sw = new StreamWriter(fileName);
-            sw.WriteLine(saveType.ToString());
-            switch (saveType)
-            {
-                case SaveType.XML:
-                    break;
-                case SaveType.JSON:
-                    break;
-                case SaveType.Binary:
-                    break;
-                case SaveType.CleanJSON:
-                    sw.Write(JsonConvert.SerializeObject(model, Formatting.Indented));
-                    break;
-                default:
-                    break;
-            }
+            sw.Write(JsonConvert.SerializeObject(model, Formatting.Indented));
             sw.Close();
         }
         public static Model Load(string fileName)
         {
             var sr = new StreamReader(fileName);
-            SaveType saveType;
-            var type = Enum.TryParse<SaveType>(sr.ReadLine(), out saveType);
-            var str = sr.ReadToEnd();
+            Model model = JsonConvert.DeserializeObject<Model>(sr.ReadToEnd());
             sr.Close();
-            Model model = null;
-            switch (saveType)
-            {
-                case SaveType.XML:
-                    break;
-                case SaveType.JSON:
-                    break;
-                case SaveType.Binary:
-                    break;
-                case SaveType.CleanJSON:
-                    model = JsonConvert.DeserializeObject<Model>(str);
-                    break;
-                default:
-                    break;
-            }
             foreach (ModelNode item in model.Tree.GetAll())
             {
                 model.XpathToModelNode.Add(item.Xpath, item);
